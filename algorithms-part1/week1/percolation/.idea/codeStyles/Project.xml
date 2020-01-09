@@ -3,7 +3,6 @@
     <option name="LINE_SEPARATOR" value="&#10;" />
     <option name="SOFT_MARGINS" value="80" />
     <JavaCodeStyleSettings>
-      <option name="INSERT_OVERRIDE_ANNOTATION" value="false" />
       <option name="ANNOTATION_PARAMETER_WRAP" value="1" />
       <option name="ALIGN_MULTILINE_ANNOTATION_PARAMETERS" value="true" />
       <option name="CLASS_COUNT_TO_USE_IMPORT_ON_DEMAND" value="20" />
@@ -12,7 +11,6 @@
         <value />
       </option>
       <option name="JD_DO_NOT_WRAP_ONE_LINE_COMMENTS" value="true" />
-      <option name="JD_PRESERVE_LINE_FEEDS" value="true" />
     </JavaCodeStyleSettings>
     <codeStyleSettings language="JAVA">
       <option name="RIGHT_MARGIN" value="100" />

@@ -1,40 +1,64 @@
 /* *****************************************************************************
- *  Name:              Alan Turing
- *  Coursera User ID:  123456
- *  Last modified:     1/1/2019
+ *  Name:              mike meng
+ *  Coursera User ID:  mengmingliang
+ *  Last modified:     1/8/2020
  **************************************************************************** */
 
-import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
-
-import java.util.Random;
+import edu.princeton.cs.algs4.StdRandom;
+import edu.princeton.cs.algs4.StdStats;
 
 public class PercolationStats {
     // perform independent trials on an n-by-n grid
+    private final double[] threshold;
+    private double meanVal;
+    private double devVal;
+    private final int trials;
+
+
     public PercolationStats(int n, int trials) {
         if (n <= 0 || trials <= 0) {
-            throw new IllegalArgumentException("invalide argument");
+            throw new IllegalArgumentException();
+        }
+
+        this.threshold = new double[trials];
+        this.trials = trials;
+        this.meanVal = 0.0;
+        this.devVal = 0.0;
+
+        for (int i = 0; i < trials; ++i) {
+            Percolation perc = new Percolation(n);
+            while (perc.percolates() == false) {
+                int row = StdRandom.uniform(n) + 1;
+                int col = StdRandom.uniform(n) + 1;
+                if (!perc.isOpen(row, col)) {
+                    perc.open(row, col);
+                }
+            }
+            threshold[i] = (double) perc.numberOfOpenSites() / (n * n);
         }
     }
 
     // sample mean of percolation threshold
     public double mean() {
-        return 0.3;
+        this.meanVal = StdStats.mean(threshold);
+        return this.meanVal;
     }
 
     // sample standard deviation of percolation threshold
     public double stddev() {
-        return 0.0;
+        this.devVal = StdStats.stddev(threshold);
+        return this.devVal;
     }
 
     // low endpoint of 95% confidence interval
     public double confidenceLo() {
-        return 0.1;
+        return this.meanVal - 1.96 * devVal / Math.sqrt(this.trials);
     }
 
     // high endpoint of 95% confidence interval
     public double confidenceHi() {
-        return 0.5;
+        return this.meanVal + 1.96 * devVal / Math.sqrt(this.trials);
     }
 
     public static void main(String[] args) {
@@ -45,18 +69,23 @@ public class PercolationStats {
             expr = Integer.parseInt(args[1]);
         }
 
-        // repeatedly open site specified my mouse click and draw resulting system
-        StdOut.println(n);
-        StdDraw.enableDoubleBuffering();
-        Percolation perc = new Percolation(n);
-        PercolationVisualizer.draw(perc, n);
-        StdDraw.show();
+        double[] exprthreshold = new double[expr];
+        for (int i = 0; i < expr; ++i) {
+            Percolation perc = new Percolation(n);
+            while (!perc.percolates()) {
+                int row = StdRandom.uniform(n) + 1;
+                int col = StdRandom.uniform(n) + 1;
+                if (!perc.isOpen(row, col)) {
+                    perc.open(row, col);
+                }
+            }
+            exprthreshold[i] = (double) perc.numberOfOpenSites() / (n * n);
+        }
 
-        /*random*/
-        Random r = new Random();
-        int x = r.nextInt(n) + 1;
-        int y = r.nextInt(n) + 1;
-        perc.open(x, y);
-        StdDraw.pause(5);
+        StdOut.println("mean                    =" + StdStats.mean(exprthreshold));
+        StdOut.println("stddev                  =" + StdStats.stddev(exprthreshold));
+        double lo = StdStats.mean(exprthreshold) - 1.96 / Math.sqrt(expr);
+        double hi = StdStats.mean(exprthreshold) + 1.96 / Math.sqrt(expr);
+        StdOut.println("95% confidence interval = [" + lo + "," + hi + "]");
     }
 }

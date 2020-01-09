@@ -14,8 +14,6 @@
 import edu.princeton.cs.algs4.StdDraw;
 import edu.princeton.cs.algs4.StdOut;
 
-import java.util.Random;
-
 public class InteractivePercolationVisualizer {
 
     public static void main(String[] args) {
@@ -51,18 +49,16 @@ public class InteractivePercolationVisualizer {
                     }
                     perc.open(i, j);
                 }
+                if (perc.percolates() == true) {
+                    StdOut.println("percolates is connected!");
+                }
 
                 // draw n-by-n percolation system
                 PercolationVisualizer.draw(perc, n);
                 StdDraw.show();
             }
 
-            /*random*/
-            Random r = new Random();
-            int x = r.nextInt(n) + 1;
-            int y = r.nextInt(n) + 1;
-            perc.open(x, y);
-            StdDraw.pause(5);
+            StdDraw.pause(20);
         }
     }
 }

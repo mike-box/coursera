@@ -20,22 +20,19 @@
     <option name="IS_AUTOSCROLL_TO_SOURCE" value="true" />
   </component>
   <component name="FileTemplateManagerImpl">
-    <option name="RECENT_TEMPLATES">
-      <list>
-        <option value="Class" />
-      </list>
-    </option>
     <option name="SCHEME" value="Project" />
   </component>
   <component name="FindBugs-IDEA-Workspace">
     <analyzeAfterCompile>true</analyzeAfterCompile>
     <toolWindowToFront>false</toolWindowToFront>
   </component>
-  <component name="ProjectId" id="1W5pSvCZmlgt2ziwtDXWNHZcadM" />
+  <component name="ProjectId" id="1W7GmCEStE39Mv92VLISUek63ey" />
   <component name="PropertiesComponent">
     <property name="ToolWindowMessages.ShowToolbar" value="false" />
     <property name="ToolWindowRun.ShowToolbar" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="project.structure.last.edited" value="Libraries" />
+    <property name="project.structure.proportion" value="0.15" />
+    <property name="project.structure.side.proportion" value="0.2" />
     <property name="settings.editor.selected.configurable" value="settings.saveactions" />
   </component>
   <component name="RunDashboard">
@@ -50,23 +47,27 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Application.InteractivePercolationVisualizer">
-    <configuration name="InteractivePercolationVisualizer" type="Application" factoryName="Application">
+  <component name="RunManager" selected="Application.PercolationVisualizer">
+    <configuration name="InteractivePercolationVisualizer" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="InteractivePercolationVisualizer" />
       <module name="Algorithms, Part I" />
-      <option name="PROGRAM_PARAMETERS" value="100" />
-      <method v="2" />
+      <option name="PROGRAM_PARAMETERS" value="6" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
     </configuration>
-    <configuration name="Percolation" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
-      <option name="MAIN_CLASS_NAME" value="Percolation" />
+    <configuration name="PercolationStats" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="PercolationStats" />
       <module name="Algorithms, Part I" />
-      <option name="PROGRAM_PARAMETERS" value="10" />
-      <method v="2" />
+      <option name="PROGRAM_PARAMETERS" value="20 10" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
     </configuration>
     <configuration name="PercolationVisualizer" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="PercolationVisualizer" />
       <module name="Algorithms, Part I" />
-      <option name="PROGRAM_PARAMETERS" value="20" />
+      <option name="PROGRAM_PARAMETERS" value="input10.txt" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="Application" factoryName="Application">
@@ -74,7 +75,8 @@
     </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Percolation" />
+        <item itemvalue="Application.PercolationStats" />
+        <item itemvalue="Application.InteractivePercolationVisualizer" />
       </list>
     </recent_temporary>
   </component>

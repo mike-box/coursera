@@ -44,6 +44,7 @@
       <name>java.awt.FileDialog</name>
       <name>java.awt.FlowLayout</name>
       <name>java.awt.FocusTraversalPolicy</name>
+      <name>java.awt.Font</name>
       <name>java.awt.FontFormatException</name>
       <name>java.awt.FontMetrics</name>
       <name>java.awt.Frame</name>
@@ -342,6 +343,7 @@
       <name>java.util.logging</name>
       <name>java.util.prefs</name>
       <name>java.util.regex</name>
+      <name>java.util.regex</name>
       <name>java.util.spi</name>
       <name>java.util.stream</name>
       <name>java.util.zip</name>
@@ -351,12 +353,7 @@
       <name>jdk</name>
       <name>netscape</name>
       <name>oracle</name>
-      <name>org.graalvm</name>
-      <name>org.ietf</name>
-      <name>org.jcp</name>
-      <name>org.omg</name>
-      <name>org.w3c</name>
-      <name>org.xml</name>
+      <name>org</name>
       <name>sun</name>
     </excluded-names>
   </component>

@@ -1,27 +1,31 @@
 /* *****************************************************************************
- *  Name:              Alan Turing
- *  Coursera User ID:  123456
- *  Last modified:     1/1/2019
+ *  Name:              mike meng
+ *  Coursera User ID:  mengmingliang
+ *  Last modified:     1/8/2020
  **************************************************************************** */
+
+import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
     private int[][] grid;
-    private int rowSz;
-    private int colSz;
-    private int[] roots;
-    private int[] sz;
+    private final int rowSz;
+    private final int colSz;
     private int openSz;
     private boolean[] touchTop;
     private boolean[] touchButtom;
     private boolean state;
+    private WeightedQuickUnionUF uf;
 
     // creates n-by-n grid, with all sites initially blocked
     public Percolation(int n) {
+        if (n <= 0) {
+            throw new java.lang.IllegalArgumentException();
+        }
+
+        this.uf = new WeightedQuickUnionUF(n * n);
         this.grid = new int[n][];
         this.rowSz = n;
         this.colSz = n;
-        this.roots = new int[n * n];
-        this.sz = new int[n * n];
         this.openSz = 0;
         this.touchTop = new boolean[n * n];
         this.touchButtom = new boolean[n * n];
@@ -31,60 +35,28 @@ public class Percolation {
             grid[i] = new int[n];
             for (int j = 0; j < n; ++j) {
                 grid[i][j] = 0;
-                roots[i * n + j] = i * n + j;
-                sz[i * n + j] = 1;
                 touchTop[i * n + j] = false;
                 touchButtom[i * n + j] = false;
             }
         }
     }
 
-    public int find(int row, int col) {
+    private int find(int row, int col) {
         int val = row * colSz + col;
-        while (roots[val] != val) {
-            val = roots[val];
-        }
-
-        return val;
+        return uf.find(val);
     }
 
-    public boolean connected(int row1, int col1, int row2, int col2) {
+    private boolean union(int row1, int col1, int row2, int col2) {
         int root1 = find(row1, col1);
         int root2 = find(row2, col2);
-        if (root1 == root2) {
-            return true;
-        }
-        else {
-            return false;
-        }
-    }
-
-    public int count(int row, int col) {
-        int root = find(row, col);
-        return sz[root];
-    }
-
-    public boolean union(int row1, int col1, int row2, int col2) {
-        int root1 = find(row1, col1);
-        int root2 = find(row2, col2);
-        if (root1 == root2) {
-            return true;
-        }
-
-        if (sz[root1] > sz[root2]) {
-            roots[root2] = root1;
-            sz[root1] += sz[root2];
-            touchTop[root1] = this.touchTop[root1] || this.touchTop[root2];
-            touchButtom[root1] = this.touchButtom[root1] || this.touchButtom[root2];
-            this.state = this.state || (touchButtom[root1] & touchButtom[root1]);
-        }
-        else {
-            roots[root1] = root2;
-            sz[root2] += sz[root1];
-            touchTop[root2] = this.touchTop[root1] | this.touchTop[root2];
-            touchButtom[root2] = this.touchButtom[root1] | this.touchButtom[root2];
-            this.state = this.state || (touchButtom[root2] & touchButtom[root2]);
-        }
+        uf.union(root1, root2);
+        boolean canTouchTop = this.touchTop[root1] || this.touchTop[root2];
+        boolean canTouchButtom = this.touchButtom[root1] || this.touchButtom[root2];
+        touchTop[root1] = canTouchTop;
+        touchButtom[root1] = canTouchButtom;
+        touchTop[root2] = canTouchTop;
+        touchButtom[root2] = canTouchButtom;
+        this.state = this.state || (canTouchTop && canTouchButtom);
 
         return true;
     }
@@ -95,7 +67,7 @@ public class Percolation {
         row--;
         col--;
         if (row < 0 || row >= this.rowSz || col < 0 || col >= this.colSz) {
-            return;
+            throw new java.lang.IllegalArgumentException();
         }
         if (this.grid[row][col] == 1) {
             return;
@@ -108,6 +80,9 @@ public class Percolation {
         }
         if (row == rowSz - 1) {
             this.touchButtom[row * colSz + col] = true;
+        }
+        if (rowSz == 1) {
+            this.state = true;
         }
         for (int i = 0; i < 4; ++i) {
             int x = row + d[i];
@@ -125,7 +100,7 @@ public class Percolation {
         row--;
         col--;
         if (row < 0 || row >= this.rowSz || col < 0 || col >= this.colSz) {
-            return false;
+            throw new java.lang.IllegalArgumentException();
         }
         return grid[row][col] == 1;
     }
@@ -135,7 +110,7 @@ public class Percolation {
         row--;
         col--;
         if (row < 0 || row >= this.rowSz || col < 0 || col >= this.colSz) {
-            return false;
+            throw new java.lang.IllegalArgumentException();
         }
 
         int root = find(row, col);

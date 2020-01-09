@@ -3,7 +3,7 @@
   "-//Checkstyle//DTD Checkstyle Configuration 1.3//EN"
   "https://checkstyle.org/dtds/configuration_1_3.dtd">
 
-    <!-- 4/12/2019  The Algorithm and Intro to Java checkstyle-coursera.xml files are the same -->
+    <!-- TODO: StdRandom.uniform(1): always returns 0. Did you mean StdRandom.uniform(0.0, 1.0)?  -->
 
 <module name="Checker">
     <!-- directory where the .java file lives -->
@@ -54,22 +54,6 @@
         <property name="message" value="Line contains either a non-printable or control character."/>
     </module>
 
-    <!-- check for non printable Unicode characters -->
-    <module name="RegexpSingleline">
-        <property name="id" value="IllegalCharacter"/>
-        <property name="fileExtensions" value ="txt, java, toy"/>
-        <property name="format" value="[\u0080-\u009f]"/>
-        <property name="message" value="Line contains a Unicode control character."/>
-    </module>
-
-    <!-- check for non printable Unicode characters -->
-    <module name="RegexpSingleline">
-        <property name="id" value="IllegalCharacter"/>
-        <property name="fileExtensions" value ="txt, java, toy"/>
-        <property name="format" value="[\u2028\u2029]"/>
-        <property name="message" value="Line contains an invisible Unicode line or paragraph separator."/>
-    </module>
-
     <!-- check for Rich Text Format (RTF) -->
     <module name="RegexpMultiline">
         <property name="id" value="RichTextFormat"/>
@@ -112,15 +96,6 @@
         <property name="fileExtensions" value="java"/>
         <property name="ignoreFileNameExtensions" value="true"/>
         <message key = "regexp.filename.match" value="Do not submit a file with this name; it is the name of a class in ''algs4.jar''."/>
-    </module>
-
-    <module name="RegexpOnFilename">
-        <property name="severity" value="error"/>
-        <property name="fileNamePattern" value="126$"/>
-        <property name="match" value="true"/>
-        <property name="fileExtensions" value="java"/>
-        <property name="ignoreFileNameExtensions" value="true"/>
-        <message key = "regexp.filename.match" value="Do not submit a file whose name ends in ''126''; that suffix is reserved by the autograder."/>
     </module>
 
     <module name="RegexpOnFilename">
@@ -200,7 +175,7 @@
 
         <!-- =========================================================================== -->
         <!-- Check for annotations                                                       -->
-        <!-- https://checkstyle.sourceforge.io/config_annotation.html                    -->
+        <!-- http://checkstyle.sourceforge.net/config_annotation.html                    -->
         <!-- =========================================================================== -->
 
 <!--
@@ -214,7 +189,7 @@
 
         <!-- =========================================================================== -->
         <!-- Block checks                                                                -->
-        <!-- https://checkstyle.sourceforge.io/config_blocks.html                        -->
+        <!-- http://checkstyle.sourceforge.net/config_blocks.html                        -->
         <!-- =========================================================================== -->
 
         <module name="EmptyCatchBlock"/>
@@ -239,7 +214,7 @@
 
         <!-- =========================================================================== -->
         <!-- Class design                                                                -->
-        <!-- https://checkstyle.sourceforge.io/config_design.html                        -->
+        <!-- http://checkstyle.sourceforge.net/config_design.html                        -->
         <!-- =========================================================================== -->
 
         <!-- Flags instance variables in private nested classes (even though they are effectively private) -->
@@ -267,7 +242,7 @@
 
         <!-- =========================================================================== -->
         <!-- Coding violations                                                           -->
-        <!-- https://checkstyle.sourceforge.io/config_coding.html                        -->
+        <!-- http://checkstyle.sourceforge.net/config_coding.html                        -->
         <!-- =========================================================================== -->
         <module name="CovariantEquals">
             <message key="covariant.equals" value="The type of the parameter variable for the ''equals()'' method must be ''Object''."/>
@@ -301,20 +276,14 @@
         </module>
 
         <module name="NestedForDepth">
-            <property name="max" value="2"/>
-            <message key="nested.for.depth" value="Using a quadruple nested loop suggests poor design in this program."/>
+            <property name="max" value="4"/>
         </module>
-
         <module name="NestedIfDepth">
-            <property name="max" value="2"/>
-            <message key="nested.if.depth" value="Using a quadruple nested if statement suggests poor design in this program."/>
+            <property name="max" value="3"/>
         </module>
-
         <module name="NestedTryDepth">
-            <property name="max" value="0"/>
-            <message key="nested.try.depth" value="Using a nested try statement suggests poor design in this program."/>
+            <property name="max" value="1"/>
         </module>
-
         <module name="NoClone"/>
         <module name="NoFinalizer"/>
         <module name="SuperClone"/>
@@ -383,7 +352,7 @@
         </module>
 
         <!-- do not allow classes from these subpackages of java.util -->
-        <module name="MyIllegalType">
+        <module name="IllegalType">
             <property name="severity" value="error"/>
             <property name="illegalClassNames" value=""/>
             <property name="format" value="^java\.util\.(concurrent|jar|spi|zip)"/>
@@ -392,7 +361,7 @@
         <module name="IllegalImport">
             <property name="severity" value="error"/>
             <property name="regexp" value="true"/>
-            <property name="illegalPkgs" value="^java\.util\.(concurrent|jar|spi|zip)"/>
+            <property name="illegalClasses" value="^java\.util\.(concurrent|jar|spi|zip)"/>
             <message key="import.illegal" value="Do not import ''{0}'' in this course."/>
         </module>
         <module name="IllegalInstantiation">
@@ -444,7 +413,7 @@
         <module name="IllegalImport">
             <property name="severity" value="error"/>
             <property name="illegalPkgs" value="edu.princeton.cs.introcs"/>
-            <message key="import.illegal" value="Do not import ''{0}'' in this course."/>
+            <message key="import.illegal" value="Do not import ''{0}'' in this course. Instead, use the I/O libraries in edu.princeton.cs.algs4."/>
         </module>
 
         <!-- do not allow these types in java.io -->
@@ -487,17 +456,17 @@
             <message key="illegal.type" value="Do not use the ''{0}'' data type in this course."/>
         </module>
 
-        <!-- prohibit all classes in java.awt (and subpackages), except java.awt.Color and java.awt.Font -->
-        <!-- do not allow data types in java.awt except java.awt.Color and java.awt.Font  -->
+        <!-- prohibit all classes in java.awt (and subpackages), except java.awt.Color -->
+        <!-- do not allow data types in java.awt except java.awt.Color  -->
         <module name="MyIllegalType">
             <property name="severity" value="error"/>
             <property name="illegalClassNames" value=""/>
-            <property name="format" value="^java\.awt\.(?!(Color|Font)$).*$"/>
+            <property name="format" value="^java\.awt\.(?!Color$).*$"/>
             <message key="illegal.type" value="Do not use the ''{0}'' data type in this course."/>
         </module>
         <module name="IllegalImport">
             <property name="severity" value="error"/>
-            <property name="illegalClasses" value="^java\.awt\.(?!(Color|Font)$).*$"/>
+            <property name="illegalClasses" value="^java\.awt\.(?!Color$).*$"/>
             <property name="regexp" value="true"/>
             <message key="import.illegal" value="Do not import ''{0}'' in this course."/>
         </module>
@@ -541,21 +510,6 @@
             <message key="instantiation.avoid" value="Do not use ''java.util.Hashtable''. Instead, use ''java.util.HashMap''."/>
         </module>
 
-        <!-- don't use java.util.Stack - it inherits from java.util.Vector and iterator goes in wrong order -->
-        <module name="IllegalType">
-            <property name="illegalClassNames" value="java.util.Stack"/>
-            <message key="illegal.type" value="Do not use ''java.util.Stack''. Instead, use ''edu.princeton.cs.algs4.Stack''."/>
-        </module>
-        <module name="IllegalImport">
-            <property name="illegalClasses" value="java.util.Stack"/>
-            <property name="regexp" value="false"/>
-            <message key="import.illegal" value="Do not use ''java.util.Stack''. Instead, use ''edu.princeton.cs.algs4.Stack''."/>
-        </module>
-        <module name="IllegalInstantiation">
-            <property name="classes" value="java.util.Stack"/>
-            <message key="instantiation.avoid" value="Do not use ''java.util.Stack''. Instead, use ''edu.princeton.cs.algs4.Stack''."/>
-        </module>
-
         <!-- do not use java.util.Vector -->
         <module name="IllegalType">
             <property name="illegalClassNames" value="java.util.Vector"/>
@@ -591,41 +545,19 @@
         </module>
 
         <!-- Don't allow variables to be declared of wrapper types   -->
-        <!-- (special case for int, boolean, and double for more descriptive error message)   -->
-        <!-- Use MyIllegalType because IllegalType flags wrapper type when used with generics -->
-        <!-- bug: doesn't seem to work if id value = "WrapperType" ??? -->
-
-        <module name="MyIllegalType">
+        <!-- bug? doesn't seem to work if value = "WrapperType"      -->
+        <!-- bug? need to include both java.lang.Boolean and Boolean -->
+        <module name="IllegalType">
             <property name="id" value="Wrapper"/>
-            <property name="illegalClassNames" value="java.lang.Boolean"/>
-            <message key="illegal.type" value="Use the primitive type ''boolean'' instead of the wrapper type ''{0}''."/>
-        </module>
-
-        <module name="MyIllegalType">
-            <property name="id" value="Wrapper"/>
-            <property name="illegalClassNames" value="java.lang.Double"/>
-            <message key="illegal.type" value="Use the primitive type ''double'' instead of the wrapper type ''{0}''."/>
-        </module>
-
-        <module name="MyIllegalType">
-            <property name="id" value="Wrapper"/>
-            <property name="illegalClassNames" value="java.lang.Integer"/>
-            <message key="illegal.type" value="Use the primitive type ''int'' instead of the wrapper type ''{0}''."/>
-        </module>
-
-        <module name="MyIllegalType">
-            <property name="id" value="Wrapper"/>
-            <property name="illegalClassNames" value="java.lang.Character"/>
-            <message key="illegal.type" value="Use the primitive type ''char'' instead of the wrapper type ''{0}''."/>
-        </module>
-
-        <module name="MyIllegalType">
-            <property name="id" value="Wrapper"/>
-            <property name="illegalClassNames" value="java.lang.Long,
-                                                      java.lang.Short,
-                                                      java.lang.Float,
-                                                      java.lang.Byte"/>
-            <message key="illegal.type" value="Use the primitive type instead of the corresponding wrapper type ''{0}''. For example, use ''long'' instead of ''Long''."/>
+            <property name="illegalClassNames" value="java.lang.Boolean,   Boolean,
+                                                      java.lang.Integer,   Integer,
+                                                      java.lang.Double,    Double,
+                                                      java.lang.Long,      Long,
+                                                      java.lang.Short,     Short,
+                                                      java.lang.Float,     Float,
+                                                      java.lang.Byte,      Byte,
+                                                      java.lang.Character, Character"/>
+            <message key="illegal.type" value="Use the primitive type instead of the corresponding wrapper type ''{0}''. For example, use ''boolean'' instead of ''Boolean''."/>
         </module>
 
         <!-- Don't allow objects to be constructed of wrapper types -->
@@ -639,7 +571,7 @@
                                             java.lang.Float,
                                             java.lang.Byte,
                                             java.lang.Character"/>
-            <message key="instantiation.avoid" value="You should not need to call the ''{0}'' constructor."/>
+            <message key="instantiation.avoid" value="Use the primitive type instead of the corresponding wrapper type ''{0}''. For example, use ''boolean'' instead of ''Boolean''."/>
         </module>
 
         <module name="DeclarationOrder">
@@ -772,7 +704,7 @@
 
         <!-- =========================================================================== -->
         <!-- Headers                                                                     -->
-        <!-- https://checkstyle.sourceforge.io/config_header.html                        -->
+        <!-- http://checkstyle.sourceforge.net/config_header.html                        -->
         <!-- =========================================================================== -->
 
 <!--
@@ -781,7 +713,7 @@
 
         <!-- =========================================================================== -->
         <!-- Imports                                                                     -->
-        <!-- https://checkstyle.sourceforge.io/config_imports.html                       -->
+        <!-- http://checkstyle.sourceforge.net/config_imports.html                       -->
         <!-- =========================================================================== -->
 
         <module name="AvoidStaticImport">
@@ -813,7 +745,7 @@
 
         <!-- =========================================================================== -->
         <!-- Javadoc comments                                                            -->
-        <!-- https://checkstyle.sourceforge.io/config_javadoc.html                       -->
+        <!-- http://checkstyle.sourceforge.net/config_javadoc.html                       -->
         <!-- =========================================================================== -->
 
 <!--    Running time increases substantially with Javadoc checks -->
@@ -833,7 +765,7 @@
 
         <!-- =========================================================================== -->
         <!-- Metrics                                                                     -->
-        <!-- https://checkstyle.sourceforge.io/config_metrics.html                       -->
+        <!-- http://checkstyle.sourceforge.net/config_metrics.html                       -->
         <!-- =========================================================================== -->
 
 <!--
@@ -847,7 +779,7 @@
 
         <!-- =========================================================================== -->
         <!-- Miscellaneous checks                                                        -->
-        <!-- https://checkstyle.sourceforge.io/config_misc.html                          -->
+        <!-- http://checkstyle.sourceforge.net/config_misc.html                          -->
         <!-- =========================================================================== -->
         <module name="TodoComment"/>
 
@@ -893,7 +825,7 @@
 
         <!-- =========================================================================== -->
         <!-- Modifiers                                                                   -->
-        <!-- https://checkstyle.sourceforge.io/config_modifier.html                      -->
+        <!-- http://checkstyle.sourceforge.net/config_modifier.html                      -->
         <!-- =========================================================================== -->
 
         <module name="ModifierOrder">
@@ -908,7 +840,7 @@
 
         <!-- =========================================================================== -->
         <!-- Naming conventions                                                          -->
-        <!-- https://checkstyle.sourceforge.io/config_naming.html                        -->
+        <!-- http://checkstyle.sourceforge.net/config_naming.html                        -->
         <!-- =========================================================================== -->
 
         <!-- MODIFIED TO ALLOW FINAL VARIABLES TO BE ALL UPPERCASE     -->
@@ -925,13 +857,15 @@
             <message key="name.invalidPattern" value="The local final variable ''{0}'' must start with a lowercase letter and use camelCase (or be ALL_UPPERCASE if it is a constant)."/>
         </module>  
 
-        <!-- local variables must be camelCase or G (for graphs) -->
+        <!-- local variables, allow camelCase or ALL_UPPERCASE of two or more characters -->
         <module name="LocalVariableName">
+            <!-- for COS 126 -->
+            <!-- <property name="format" value="^([a-z][a-zA-Z0-9]*|[A-Z][A-Z_0-9]+|G|[A-Z])$"/> -->
             <property name="format" value="^([a-z][a-zA-Z0-9]*|[A-Z][A-Z_0-9]+|G)$"/>
             <message key="name.invalidPattern" value="The local variable ''{0}'' must start with a lowercase letter and use camelCase."/>
         </module>
 
-        <!-- instance variables must be camelCase or G (for graphs) -->
+        <!-- instance variables must be camelCase or G -->
         <module name="MemberName">
             <property name="format" value="^([a-z][a-zA-Z0-9]*|G)$"/>
             <message key="name.invalidPattern" value="The instance variable ''{0}'' must start with a lowercase letter and use camelCase."/>
@@ -1024,22 +958,8 @@
 
         <!-- =========================================================================== -->
         <!-- Regexp                                                                      -->
-        <!-- https://checkstyle.sourceforge.io/config_regexp.html                        -->
+        <!-- http://checkstyle.sourceforge.net/config_regexp.html                        -->
         <!-- =========================================================================== -->
-
-        <!-- Checks for useless calls to StdRandom.uniform(1) or StdRandom.uniform(0, 1) -->
-        <module name="RegexpSinglelineJava">
-            <property name="id" value="AlwaysReturnsZero"/>
-            <property name="format" value="\bStdRandom\s*\.*\s*uniform\s*\(\s*1\s*\)"/>
-            <property name="ignoreComments" value="true"/>
-            <property name="message" value="The method call ''StdRandom.uniform(1)'' always returns ''0''. Did you mean ''StdRandom.uniform(0.0, 1.0)''?"/>
-        </module>
-        <module name="RegexpSinglelineJava">
-            <property name="id" value="AlwaysReturnsZero"/>
-            <property name="format" value="\bStdRandom\s*\.*\s*uniform\s*\(\s*0\s*,\s*1\s*\)"/>
-            <property name="ignoreComments" value="true"/>
-            <property name="message" value="The method call ''StdRandom.uniform(0, 1)'' always returns ''0''. Did you mean ''StdRandom.uniform(0.0, 1.0)''?"/>
-        </module>
 
         <!-- Checks for calls to StdDraw.show(int). -->
         <module name="RegexpSinglelineJava">
@@ -1049,15 +969,14 @@
             <property name="message" value="The method ''StdDraw.show(int)'' is deprecated. Use ''StdDraw.enableDoubleBuffering()'', ''StdDraw.show()'', and ''StdDraw.pause(int)'' instead."/>
         </module>
 
-        <!-- Checks for Math.pow(x, 3) instead of x*x*x -->
+        <!-- check for Math.pow(*, 3) and Math.pow(*, 0.5) -->
         <module name="RegexpSinglelineJava">
             <property name="id" value="Performance"/>
             <property name="format" value="\bMath\.pow\([^,]*, *3(\.0?)?\)"/>
             <property name="ignoreComments" value="true"/>
-            <property name="message" value="''Math.pow(x, 3)'' is slow. Use ''x * x * x'' instead."/>
+            <property name="message" value="''Math.pow(x, 3)'' is slow. Use ''x*x*x'' instead."/>
         </module>
 
-        <!-- Checks for Math.pow(x, 0.5) instead of Math.sqrt(x) -->
         <module name="RegexpSinglelineJava">
             <property name="id" value="Sqrt"/>
             <property name="format" value="\bMath\.pow\([^,]*, *0?\.5\)"/>
@@ -1079,21 +998,13 @@
             <property name="message" value="Did you mean to use ''Double.POSITIVE_INFINITY'' instead of ''Double.MAX_VALUE''?"/>
         </module>
 
-        <!-- Checks for java.lang.IllegalArgumentException and other fully qualified names in package java.lang -->
-        <module name="RegexpSinglelineJava">
-            <property name="id" value="UnnecessaryJavaLang"/>
-            <property name="format" value="\bjava\.lang\.[A-Z]"/>
-            <property name="ignoreComments" value="true"/>
-            <property name="message" value="Java automatically imports all classes and interfaces in the package ''java.lang''. So, there is no need to import such classes or interfaces; you can refer directly to them without the ''java.lang'' prefix."/>
-        </module>
-
 <!--
         <module name="Regexp"/>
 -->
 
         <!-- =========================================================================== -->
         <!-- Size violations                                                             -->
-        <!-- https://checkstyle.sourceforge.io/config_sizes.html                         -->
+        <!-- http://checkstyle.sourceforge.net/config_sizes.html                         -->
         <!-- =========================================================================== -->
 
         <module name="AnonInnerLength"/>
@@ -1111,7 +1022,7 @@
 
         <!-- =========================================================================== -->
         <!-- Whitespace                                                                  -->
-        <!-- https://checkstyle.sourceforge.io/config_whitespace.html                    -->
+        <!-- http://checkstyle.sourceforge.net/config_whitespace.html                    -->
         <!-- =========================================================================== -->
         <module name="GenericWhitespace"/>
         <module name="EmptyForInitializerPad"/>

@@ -18,7 +18,6 @@
            * switch statement with no default; seems OK when used for cases with (int) (4 * Math.random())
            * class  naming convention (defer to Checkstyle)
            * method naming convention (defer to Checkstyle)
-           * unused field (defer to PMD/IntelliJ since it highlight entire class)
            * class defines compareTo() and inherits equals()
       -->
     <Match>
@@ -39,7 +38,6 @@
     <!-- FCBL_FIELD_COULD_BE_LOCAL redundant with PMD -->  
     <!-- PME_POOR_MANS_ENUM  we disallow enum and seems to have false positives -->
     <!-- OCP_OVERLY_CONCRETE_PARAMETER wants Picture to be defines as java.awt.event.ActionListener -->
-    <!-- NAB_NEEDLESS_BOXING_VALUEOF wants stack.push(Integer.valueOf(s)) instead of stack.push(Integer.parseInt(s)) -->
 
     <!-- TODO: Java 7 - replace CHARSET_NAME with java.nio.charset.StandardCharsets.UTF_8 and eliminate
                         CSI_CHAR_SET_ISSUES_USE_STANDARD_CHARSET,
@@ -72,8 +70,6 @@
                           LSC_LITERAL_STRING_COMPARISON,
                           MAC_MANUAL_ARRAY_COPY,
                           MDM_RANDOM_SEED,
-                          MUI_CONTAINSKEY_BEFORE_GET,
-                          NAB_NEEDLESS_BOXING_VALUEOF,
                           OPM_OVERLY_PERMISSIVE_METHOD,
                           OCP_OVERLY_CONCRETE_PARAMETER,
                           PCOA_PARTIALLY_CONSTRUCTED_OBJECT_ACCESS,
@@ -81,18 +77,14 @@
                           PL_PARALLEL_LISTS,
                           PME_POOR_MANS_ENUM,
                           PRMC_POSSIBLY_REDUNDANT_METHOD_CALLS,
-                          PSC_PRESIZE_COLLECTIONS,
                           S508C_NON_TRANSLATABLE_STRING,
                           SACM_STATIC_ARRAY_CREATED_IN_METHOD,
-                          SCR_SLOPPY_CLASS_REFLECTION,
                           SEO_SUBOPTIMAL_EXPRESSION_ORDER,
                           SPP_TEMPORARY_TRIM,
                           STT_STRING_PARSING_A_FIELD,
                           UCPM_USE_CHARACTER_PARAMETERIZED_METHOD,
                           USBR_UNNECESSARY_STORE_BEFORE_RETURN,
                           UVA_USE_VAR_ARGS,
-                          URF_UNREAD_FIELD,
-                          UUF_UNUSED_FIELD,
                           WEM_WEAK_EXCEPTION_MESSAGING" />
     </Match>
 
@@ -264,7 +256,7 @@
 
     <Match>
         <Class name = "~AntiQuicksorter.*" />
-        <BugPattern name="HE_EQUALS_USE_HASHCODE, HE_EQUALS_NO_HASHCODE" />
+        <BugPattern name="HE_EQUALS_USE_HASHCODE" />
     </Match>
 
     <Match>
@@ -347,57 +339,22 @@
         <BugPattern name="PZLA_PREFER_ZERO_LENGTH_ARRAYS" />
     </Match>
 
-    <!-- GUI is side effect -->
-    <Match>
-        <Class name = "Keyboard" />
-        <BugPattern name="DLS_DEAD_LOCAL_STORE" />
-    </Match>
-
-    <!-- false positive in LFSR with String instance variable -->
-    <Match>
-        <Class name = "~(LFSR)" />
-        <BugPattern name="STT_TOSTRING_STORED_IN_FIELD" />
-    </Match>
-
     <!-- string concatenation before StringBuffer is introduced -->
     <Match>
-        <Class name = "~(LFSR|MarkovModel)(126)?" />
+        <Class name = "~(LFSR)(126)?" />
         <BugPattern name="SBSC_USE_STRINGBUFFER_CONCATENATION" />
     </Match>
-
     <Match>
         <Class name = "~(RingBuffer)(126)?" />
         <Method name="toString" params="" returns="java.lang.String" />
         <BugPattern name="SBSC_USE_STRINGBUFFER_CONCATENATION" />
     </Match>
-
-<!--
     <Match>
         <Class name = "~(MarkovModel)(126)?" />
         <Method name="main" />
         <BugPattern name="SBSC_USE_STRINGBUFFER_CONCATENATION" />
     </Match>
--->
 
-    <!--  ***********************************************************************  -->
-    <!--  COS 126 PROGRAMMING EXAM EXCEPTIONS                                      -->
-    <!--  ***********************************************************************  -->
-
-    <!-- string concatenation before StringBuffer is introduced -->
-    <Match>
-        <Class name = "~PokerHand|PokerHandWild|Language" />
-        <BugPattern name="SBSC_USE_STRINGBUFFER_CONCATENATION" />
-    </Match>
-
-    <!--  ***********************************************************************  -->
-    <!--  COURSERA PROGRAMMING WITH A PURPOSE EXCEPTIONS                            -->
-    <!--  ***********************************************************************  -->
-
-    <!-- generating random integers before StdRandom.uniform() is introduced -->
-    <Match>
-        <Class name = "~(RandomWalk|RandomWalkers|DiscreteDistribution|Minesweeper|Birthday)(126)?" />
-        <BugPattern name="DM_NEXTINT_VIA_NEXTDOUBLE" />
-    </Match>
 
     <!--  ***********************************************************************  -->
     <!--  COS 226 / COURSERA PROGRAMMING ASSIGNMENT EXCEPTIONS                     -->
@@ -434,13 +391,7 @@
     <!-- slider puzzle, before we've introduced hashCode() -->
     <Match>
         <Class name = "~(Board)(226)?" />
-        <BugPattern name="HE_EQUALS_USE_HASHCODE, HE_EQUALS_NO_HASHCODE" />
-    </Match>
-
-    <!-- BST style code for insert() -->
-    <Match>
-        <Class name = "~(KdTree|KdTreeST)(226)?" />
-        <BugPattern name="CFS_CONFUSING_FUNCTION_SEMANTICS" />
+        <BugPattern name="HE_EQUALS_USE_HASHCODE" />
     </Match>
 
     <!-- SCUtility not very well designed, but it's our class -->
@@ -482,7 +433,7 @@
         <BugPattern name="FCBL_FIELD_COULD_BE_LOCAL" />
     </Match>
 
-    <!-- allow methods to store values in variables named "ignore.*"  -->
+    <!-- allow methods to store values in variables with name "ignore"  -->
     <Match>
         <Local name = "~.*[Ii]gnore.*" />
         <BugPattern name="DLS_DEAD_LOCAL_STORE" />
@@ -490,12 +441,12 @@
 
     <Match>
         <Class name = "~ScreenPrimitiveContainer.*" />
-        <BugPattern name="HE_EQUALS_USE_HASHCODE, HE_EQUALS_NO_HASHCODE" />
+        <BugPattern name="HE_EQUALS_USE_HASHCODE" />
     </Match>
 
     <Match>
         <Class name = "LineSegment" />
-        <BugPattern name="HE_EQUALS_USE_HASHCODE, HE_EQUALS_NO_HASHCODE" />
+        <BugPattern name="HE_EQUALS_USE_HASHCODE" />
     </Match>
 
 
