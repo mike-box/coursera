@@ -76,6 +76,7 @@ public class BruteCollinearPoints {
         StdDraw.enableDoubleBuffering();
         StdDraw.setXscale(0, 32768);
         StdDraw.setYscale(0, 32768);
+        StdDraw.filledCircle(10, 10, 0.1);
         for (Point p : points) {
             p.draw();
         }
