@@ -78,7 +78,7 @@
     <configuration name="Particle" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="Particle" />
       <module name="Algorithms, Part I" />
-      <option name="PROGRAM_PARAMETERS" value="10" />
+      <option name="PROGRAM_PARAMETERS" value="20" />
       <method v="2" />
     </configuration>
     <configuration name="Solver" type="Application" factoryName="Application">

@@ -104,6 +104,7 @@ public class CollisionSystem {
         StdDraw.setPenColor(StdDraw.BOOK_BLUE);
         StdDraw.setScale(-1, 1);
 
+
         int n = Integer.parseInt(args[0]);
         Particle[] arrays = new Particle[n];
         for (int i = 0; i < n; i++)
