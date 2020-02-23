@@ -33,14 +33,6 @@ public class SAP {
      * @Iterable<Integer>: source
      */
     private ArrayList<Integer> shortestAncestral(Iterable<Integer> v, Iterable<Integer> w) {
-        if (v == null || w == null) throw new IllegalArgumentException();
-        for (Integer vx : v) {
-            if (vx == null || vx < 0 || vx >= graph.V()) throw new IllegalArgumentException();
-        }
-        for (Integer wx : w) {
-            if (wx == null || wx < 0 || wx >= graph.V()) throw new IllegalArgumentException();
-        }
-
         HashMap<Integer, Integer> distance = new HashMap<Integer, Integer>();
         HashSet<Integer> visit = new HashSet<Integer>();
         Queue<Integer> qu = new Queue<Integer>();
@@ -97,15 +89,24 @@ public class SAP {
         return res;
     }
 
+    private boolean assertInt(int v){
+        if(v < 0 || v >= this.graph.V()) throw new IllegalArgumentException();
+    }
     
+    private boolean assertSet(Iterable<Integer> v){
+        if (v == null || w == null) throw new IllegalArgumentException();
+        for(Integer vx : v){
+            assertInt(vx);
+        }
+    }
     /**
      * length of shortest ancestral path between v and w; -1 if no such path
      *
      * @int: source
      */
     public int length(int v, int w) {
-        if (v < 0 || v >= this.graph.V() || w < 0 || w >= this.graph.V())
-            throw new IllegalArgumentException();
+        assertInt(v);
+        assertInt(w);
         if (v == w) return 0;
 
         ArrayList<Integer> setv = new ArrayList<Integer>();
@@ -122,8 +123,8 @@ public class SAP {
      * @int:(v,w) source
      */
     public int ancestor(int v, int w) {
-        if (v < 0 || v >= this.graph.V() || w < 0 || w >= this.graph.V())
-            throw new IllegalArgumentException();
+        assertInt(v);
+        assertInt(w);
         if (v == w) return v;
         
         ArrayList<Integer> setv = new ArrayList<Integer>();
@@ -139,6 +140,8 @@ public class SAP {
      * @Iterable:(v,w) source
      */
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
+        assertSet(v);
+        assertSet(w);
         return this.shortestAncestral(v, w).get(0);
     }
 
@@ -148,6 +151,8 @@ public class SAP {
      * @Iterable:(v,w) source
      */
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
+        assertSet(v);
+        assertSet(w);
         return this.shortestAncestral(v, w).get(1);
     }
 

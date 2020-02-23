@@ -31,7 +31,7 @@
     <analyzeAfterCompile>true</analyzeAfterCompile>
     <toolWindowToFront>false</toolWindowToFront>
   </component>
-  <component name="ProjectId" id="1XIZaFSxjufnXpEnPi2YFYdkMfh" />
+  <component name="ProjectId" id="1Y9qKYX9986iIOncToLZywp46Gz" />
   <component name="PropertiesComponent">
     <property name="ToolWindowMessages.ShowToolbar" value="false" />
     <property name="ToolWindowRun.ShowToolbar" value="false" />
@@ -49,41 +49,6 @@
         </RuleState>
       </list>
     </option>
-  </component>
-  <component name="RunManager" selected="Application.ResizeDemo">
-    <configuration name="PrintEnergy" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="PrintEnergy" />
-      <module name="Algorithms, Part II" />
-      <option name="PROGRAM_PARAMETERS" value="12x10.png" />
-      <method v="2" />
-    </configuration>
-    <configuration name="PrintSeams" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="PrintSeams" />
-      <module name="Algorithms, Part II" />
-      <option name="PROGRAM_PARAMETERS" value="12x10.png" />
-      <method v="2" />
-    </configuration>
-    <configuration name="ResizeDemo" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="ResizeDemo" />
-      <module name="Algorithms, Part II" />
-      <option name="PROGRAM_PARAMETERS" value="HJocean.png 200 1" />
-      <method v="2" />
-    </configuration>
-    <configuration name="SeamCarver" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="SeamCarver" />
-      <module name="Algorithms, Part II" />
-      <option name="PROGRAM_PARAMETERS" value="12x10" />
-      <method v="2" />
-    </configuration>
-    <configuration name="ShowSeams" type="Application" factoryName="Application">
-      <option name="MAIN_CLASS_NAME" value="ShowSeams" />
-      <module name="Algorithms, Part II" />
-      <option name="PROGRAM_PARAMETERS" value="4x6.png" />
-      <method v="2" />
-    </configuration>
-    <configuration default="true" type="Application" factoryName="Application">
-      <method v="2" />
-    </configuration>
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
