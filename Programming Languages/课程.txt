@@ -1,0 +1,6 @@
+University of Washington, Programming Languages, UW CSE341, Winter 2013, 虽然在Coursera上不开了，但是University of Washington的课程主页上有完整的讲义、视频和作业，课程中实现了一个解释器Udacity CS262, 用Python做了一个简单的HTML和Javascript解释器Brown CS: CSCI 1730: Programming Languages（前三个都是主要都是实现解释器，比一般的编译原理课程简单。）Coursera Stanford Compiler，作业有C，C++，Java版本中科大华保健老师 Compiler 网易云课堂有视频，C语言UC Berkeley CS164, CS 164: Lecture Notes, Fall 2013 （视频似乎在iTunes U上有2012年的）
+
+作者：舍瓦卡卡
+链接：https://www.zhihu.com/question/49606547/answer/117585083
+来源：知乎
+著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。

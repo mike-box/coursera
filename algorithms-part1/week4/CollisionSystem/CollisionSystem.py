@@ -14,7 +14,7 @@ RED = (200, 30, 30)         # 红色，GAME OVER 的字体颜色
 BGCOLOR = (40, 40, 60)      # 背景色
 WIDTH = 800
 HEIGHT = 600
-NUMBER = 3
+NUMBER = 20
 
 class Particle:
     def __init__(self):

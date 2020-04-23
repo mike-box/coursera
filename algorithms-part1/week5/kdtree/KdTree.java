@@ -1,7 +1,7 @@
 /* *****************************************************************************
- *  Name:
- *  Date:
- *  Description:
+ *  Name:mike meng  
+ *  Date:2020.1.31
+ *  Description:created by mike meng
  **************************************************************************** */
 
 import edu.princeton.cs.algs4.Point2D;
