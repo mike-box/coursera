@@ -1,0 +1,23 @@
+CHIP Or1Way16 {
+    IN a[16], b;
+    OUT out[16];
+
+    PARTS:
+    // Put your code here:
+    Or (a = a[0], b = b, out = out[0]);
+    Or (a = a[1], b = b, out = out[1]);
+    Or (a = a[2], b = b, out = out[2]);
+    Or (a = a[3], b = b, out = out[3]);
+    Or (a = a[4], b = b, out = out[4]);
+    Or (a = a[5], b = b, out = out[5]);
+    Or (a = a[6], b = b, out = out[6]);
+    Or (a = a[7], b = b, out = out[7]);
+    Or (a = a[8], b = b, out = out[8]);
+    Or (a = a[9], b = b, out = out[9]);
+    Or (a = a[10], b = b, out = out[10]);
+    Or (a = a[11], b = b, out = out[11]);
+    Or (a = a[12], b = b, out = out[12]);
+    Or (a = a[13], b = b, out = out[13]);
+    Or (a = a[14], b = b, out = out[14]);
+    Or (a = a[15], b = b, out = out[15]);
+}

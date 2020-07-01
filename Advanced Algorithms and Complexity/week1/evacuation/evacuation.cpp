@@ -1,84 +1,154 @@
 #include <iostream>
 #include <vector>
+#include <queue>
+#include <unordered_set>
+#include <set>
+#include <unordered_map>
+#include <map>
+#include <limits.h>
 
 using std::vector;
+using std::cin;
+using std::cout;
+using namespace std;
 
-/* This class implements a bit unusual scheme for storing edges of the graph,
- * in order to retrieve the backward edge for a given edge quickly. */
-class FlowGraph {
-public:
-    struct Edge {
-        int from, to, capacity, flow;
-    };
-
-private:
-    /* List of all - forward and backward - edges */
-    vector<Edge> edges;
-
-    /* These adjacency lists store only indices of edges in the edges list */
-    vector<vector<size_t> > graph;
-
-public:
-    explicit FlowGraph(size_t n): graph(n) {}
-
-    void add_edge(int from, int to, int capacity) {
-        /* Note that we first append a forward edge and then a backward edge,
-         * so all forward edges are stored at even indices (starting from 0),
-         * whereas backward edges are stored at odd indices in the list edges */
-        Edge forward_edge = {from, to, capacity, 0};
-        Edge backward_edge = {to, from, 0, 0};
-        graph[from].push_back(edges.size());
-        edges.push_back(forward_edge);
-        graph[to].push_back(edges.size());
-        edges.push_back(backward_edge);
-    }
-
-    size_t size() const {
-        return graph.size();
-    }
-
-    const vector<size_t>& get_ids(int from) const {
-        return graph[from];
-    }
-
-    const Edge& get_edge(size_t id) const {
-        return edges[id];
-    }
-
-    void add_flow(size_t id, int flow) {
-        /* To get a backward edge for a true forward edge (i.e id is even), we should get id + 1
-         * due to the described above scheme. On the other hand, when we have to get a "backward"
-         * edge for a backward edge (i.e. get a forward edge for backward - id is odd), id - 1
-         * should be taken.
-         *
-         * It turns out that id ^ 1 works for both cases. Think this through! */
-        edges[id].flow += flow;
-        edges[id ^ 1].flow -= flow;
+typedef pair<int,int> pii;
+struct FlowEdge
+{
+    int from;
+    int to;
+    int flow;
+    int capbility;
+    FlowEdge(int v,int w,int capbility){
+        this->from = v;
+        this->to = w;
+        this->flow = 0;
+        this->capbility = capbility;
     }
 };
+
+class FlowGraph{
+private:
+    map<pii,FlowEdge *> edgs;
+    unordered_map<int, set<int> > adj; 
+    unordered_set<int> visit;
+    unordered_map<int,int> edgeTo;
+    
+    int others(FlowEdge * e,int v){
+        if(!e) return -1;
+        if(v == e->from) return e->to;
+        else if(v == e->to) return e->from;
+    }
+
+    bool addResidualTo(FlowEdge * e,int to,int delta){
+        if(!e) return false;
+        if(e->from == to) e->flow -= delta;
+        else if(e->to == to) e->flow += delta;
+        return true;
+    }
+
+    int residualTo(FlowEdge * e,int to){
+        if(!e) return -1;
+        if(e->to == to) return e->capbility-e->flow;
+        else if(e->from == to) return e->flow;
+        return 0;
+    }
+
+public:
+    FlowEdge * getEdge(int from,int to){
+        pair<int,int> forward = make_pair(from,to);
+        pair<int,int> backward = make_pair(to,from);
+
+        if(this->edgs.count(forward)) return this->edgs[forward];
+        else if(this->edgs.count(backward)) return this->edgs[backward];
+        else return NULL;
+    }
+
+    bool addEdges(FlowEdge * e){
+        this->adj[e->from].insert(e->to);
+        this->adj[e->to].insert(e->from);
+        this->edgs[make_pair(e->from,e->to)] = e;
+        return true;
+    }
+
+    bool addResidualToEdge(int from,int to,int delta){
+        FlowEdge * edge =  getEdge(from,to);
+        if(!edge) return false;
+        return addResidualTo(edge,to,delta);
+    }
+
+    int residualToEdge(int from,int to){
+        FlowEdge * edge =  getEdge(from,to);
+        if(!edge) return false;
+        return residualTo(edge,to);
+    }
+    
+    bool augmentPath(int s,int t){
+        queue<int> qu;
+
+        this->visit.insert(s);
+        qu.push(s);
+        while(!qu.empty()){
+            int curr = qu.front();
+            qu.pop();
+
+            if(curr == t) break;
+            for(auto v : this->adj[curr]){
+                if(this->visit.count(v) || residualToEdge(curr,v) <= 0) continue;
+                this->visit.insert(v);
+                this->edgeTo[v] = curr;
+            }
+        }
+
+        return this->visit.count(t) != 0;
+    }
+
+    int maxFlow(int s,int t){
+        int value = 0;
+
+        this->visit.clear();
+        this->edgeTo.clear();
+        while(augmentPath(s,t)){
+            cout<<"get the right paht:"<<endl;
+            int bottoleneck = INT_MAX;
+            for(int v = t; v != s; v = this->edgeTo[v]){
+                bottoleneck = min(bottoleneck,residualToEdge(this->edgeTo[v],v));
+            }
+            for(int v = t; v != s; v = this->edgeTo[v]){
+                addResidualToEdge(this->edgeTo[v],v,bottoleneck);
+            }
+            value += bottoleneck;
+            this->edgeTo.clear();
+            this->visit.clear();
+        }
+        return value;
+    }
+
+    bool inCut(int v){
+        return visit.count(v);
+    }
+};
+
 
 FlowGraph read_data() {
     int vertex_count, edge_count;
     std::cin >> vertex_count >> edge_count;
-    FlowGraph graph(vertex_count);
+    FlowGraph graph;
     for (int i = 0; i < edge_count; ++i) {
         int u, v, capacity;
         std::cin >> u >> v >> capacity;
-        graph.add_edge(u - 1, v - 1, capacity);
+        graph.addEdges(new FlowEdge(u - 1, v - 1, capacity));
     }
+    for(int i = 1; i < vertex_count; ++i){
+        graph.addEdges(new FlowEdge(i, vertex_count, 10000));
+    }
+    cout<<graph.maxFlow(0,vertex_count)<<endl;
     return graph;
 }
 
-int max_flow(FlowGraph& graph, int from, int to) {
-    int flow = 0;
-    /* your code goes here */
-    return flow;
-}
 
 int main() {
     std::ios_base::sync_with_stdio(false);
     FlowGraph graph = read_data();
-
-    std::cout << max_flow(graph, 0, graph.size() - 1) << "\n";
     return 0;
 }

@@ -1,0 +1,48 @@
+CHIP FastAdd4 {
+    IN a[4], b[4], c;
+    OUT out[4],
+        carry;
+
+    PARTS:
+    And (a = a[0], b = b[0], out = g0);
+    And (a = a[1], b = b[1], out = g1);
+    And (a = a[2], b = b[2], out = g2);
+    And (a = a[3], b = b[3], out = g3);
+
+    Or (a = a[0], b = b[0], out = p0);
+    Or (a = a[1], b = b[1], out = p1);
+    Or (a = a[2], b = b[2], out = p2);
+    Or (a = a[3], b = b[3], out = p3);
+
+    //c1 = g0 + p0*c0
+    And (a = p0, b = c, out = p0c0);
+    Or (a = g0, b = p0c0, out = c1);
+
+    //c2 = g1 + p1*g0 + p1*p0*c0
+    And (a = p1, b = g0, out = p1g0);
+    And4Way (in[0] = p1, in[1] = p0, in[2] = c , in[3] = true, out = p1p0c0);
+    Or4Way  (in[0] = g1, in[1] = p1g0,in[2] = p1p0c0, in[3] = false, out = c2);
+
+    //c3 = g2 + p2*g1 + p2*p1*g0 + p2*p1*p0*c0
+    And (a = p2, b = g1, out = p2g1);
+    And4Way (in[0] = p2, in[1] = p1, in[2] = g0, in[3] = true, out = p2p1g0);
+    And4Way (in[0] = p2, in[1] = p1, in[2] = p0, in[3] = c, out = p2p1p0c0);
+    Or4Way (in[0] = g2, in[1] = p2g1, in[2] = p2p1g0, in[3] = p2p1p0c0, out = c3);
+
+    //c4 = g3 + p3*g2 + p3*p2*g1 + p3*p2*p1*g0 + p3*p2*p1*p0*c0
+    And (a = p3, b = g2, out = p3g2);
+    And4Way (in[0] = p3, in[1] = p2, in[2] = g1, in[3] = true, out = p3p2g1);
+    And4Way (in[0] = p3, in[1] = p2, in[2] = p1, in[3] = g0, out = p3p2p1g0);
+    And8Way (in[0] = p3, in[1] = p2, in[2] = p1, in[3] = p0, in[4] = c, in[5..7] = true, out = p3p2p1p0c0);
+    Or8Way (in[0] = g3, in[1] = p3g2, in[2] = p3p2g1, in[3] = p3p2p1g0, in[4] = p3p2p1p0c0, in[5..7] = false, out = carry);
+
+    // a + b
+    Xor (a = a[0], b = b[0], out = add0);
+    Xor (a = add0, b = c , out = out[0]);
+    Xor (a = a[1], b = b[1], out = add1);
+    Xor (a = add1, b = c1 , out = out[1]);
+    Xor (a = a[2], b = b[2], out = add2);
+    Xor (a = add2, b = c2 , out = out[2]);
+    Xor (a = a[3], b = b[3], out = add3);
+    Xor (a = add3, b = c3 , out = out[3]);
+}

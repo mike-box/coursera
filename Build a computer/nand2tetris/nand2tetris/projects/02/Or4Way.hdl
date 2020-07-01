@@ -1,0 +1,10 @@
+CHIP Or4Way {
+    IN in[4];
+    OUT out;
+
+    PARTS:
+    // Put your code here:
+    Or (a = in[0], b = in[1], out = or01);
+    Or (a = in[2], b = in[3], out = or23);
+    Or (a = or01,  b = or23,  out = out);
+}

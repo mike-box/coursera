@@ -1,0 +1,73 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/01/Mux16.hdl
+
+/**
+ * 16-bit multiplexor: 
+ * for i = 0..15 out[i] = a[i] if sel == 0 
+ *                        b[i] if sel == 1
+ */
+
+CHIP Mux16 {
+    IN a[16], b[16], sel;
+    OUT out[16];
+
+    PARTS:
+    // Put your code here:
+    Not (in = sel, out = notsel);
+
+    //select a[i]
+    And (a = a[0], b = notsel, out = sela0);
+    And (a = a[1], b = notsel, out = sela1);
+    And (a = a[2], b = notsel, out = sela2);
+    And (a = a[3], b = notsel, out = sela3);
+    And (a = a[4], b = notsel, out = sela4);
+    And (a = a[5], b = notsel, out = sela5);
+    And (a = a[6], b = notsel, out = sela6);
+    And (a = a[7], b = notsel, out = sela7);
+    And (a = a[8], b = notsel, out = sela8);
+    And (a = a[9], b = notsel, out = sela9);
+    And (a = a[10], b = notsel, out = sela10);
+    And (a = a[11], b = notsel, out = sela11);
+    And (a = a[12], b = notsel, out = sela12);
+    And (a = a[13], b = notsel, out = sela13);
+    And (a = a[14], b = notsel, out = sela14);
+    And (a = a[15], b = notsel, out = sela15);
+
+    /* select b[i]*/
+    And (a = b[0], b = sel, out = selb0);
+    And (a = b[1], b = sel, out = selb1);
+    And (a = b[2], b = sel, out = selb2);
+    And (a = b[3], b = sel, out = selb3);
+    And (a = b[4], b = sel, out = selb4);
+    And (a = b[5], b = sel, out = selb5);
+    And (a = b[6], b = sel, out = selb6);
+    And (a = b[7], b = sel, out = selb7);
+    And (a = b[8], b = sel, out = selb8);
+    And (a = b[9], b = sel, out = selb9);
+    And (a = b[10], b = sel, out = selb10);
+    And (a = b[11], b = sel, out = selb11);
+    And (a = b[12], b = sel, out = selb12);
+    And (a = b[13], b = sel, out = selb13);
+    And (a = b[14], b = sel, out = selb14);
+    And (a = b[15], b = sel, out = selb15);
+
+    //select a or b
+    Or (a = sela0,  b = selb0,  out = out[0]);
+    Or (a = sela1,  b = selb1,  out = out[1]);
+    Or (a = sela2,  b = selb2,  out = out[2]);
+    Or (a = sela3,  b = selb3,  out = out[3]);
+    Or (a = sela4,  b = selb4,  out = out[4]);
+    Or (a = sela5,  b = selb5,  out = out[5]);
+    Or (a = sela6,  b = selb6,  out = out[6]);
+    Or (a = sela7,  b = selb7,  out = out[7]);
+    Or (a = sela8,  b = selb8,  out = out[8]);
+    Or (a = sela9,  b = selb9,  out = out[9]);
+    Or (a = sela10, b = selb10, out = out[10]);
+    Or (a = sela11, b = selb11, out = out[11]);
+    Or (a = sela12, b = selb12, out = out[12]);
+    Or (a = sela13, b = selb13, out = out[13]);
+    Or (a = sela14, b = selb14, out = out[14]);
+    Or (a = sela15, b = selb15, out = out[15]);
+}

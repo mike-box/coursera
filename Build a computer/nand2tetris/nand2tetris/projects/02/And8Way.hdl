@@ -1,0 +1,14 @@
+CHIP And8Way {
+    IN in[8];
+    OUT out;
+
+    PARTS:
+    // Put your code here:
+    And (a = in[0], b = in[1], out = and01);
+    And (a = in[2], b = in[3], out = and23);
+    And (a = in[4], b = in[5], out = and45);
+    And (a = in[6], b = in[7], out = and67);
+    And (a = and01, b = and23, out = and13);
+    And (a = and45, b = and67, out = and47);
+    And (a = and13, b = and47, out = out);
+}
