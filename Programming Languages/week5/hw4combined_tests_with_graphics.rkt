@@ -1,5 +1,5 @@
 #lang racket
-
+(provide (all-defined-out))
 ;; Programming Languages Homework4 Graphical Tests
 ;; Save this file to the same directory as your homework file
 ;; These are tests that use a little graphics to make the assignment more fun.
@@ -13,7 +13,7 @@
 ;; the graphics code, though it is not sophisticated.
 
 (require (lib "graphics.rkt" "graphics"))
-
+(require "hw4.rkt")
 (open-graphics)
 
 (define window-name "Programming Languages, Homework 4")

@@ -8,6 +8,7 @@
 ;;(require "HOMEWORK_FILE")
 
 (require rackunit)
+(require "hw4.rkt")
 
 ;; Helper functions
 (define ones (lambda () (cons 1 ones)))

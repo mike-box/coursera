@@ -1,0 +1,41 @@
+#lang racket
+
+(provide (all-defined-out)) ;; so we can put tests in a second file
+;; created by mike meng , mml1106@outlook.com
+;; put your code below
+
+;;problem 1
+(define (sequence low high stride)
+    (if (> low high)
+        null
+        (cons low (sequence (+ low stride) high stride))))
+
+;;problem 2
+(define (string-append-map xs suffix)
+    (map (lambda (str) (string-append str suffix)) xs))
+
+;;problem 3
+(define (list-nth-mod xs n)
+    (if (< n 0)
+        (error "list-nth-mod: negative number")
+        (if (null? xs)
+            (error "list-nth-mod: empty list")
+            (car (list-tail xs (remainder n (length xs)))))))
+
+;;problem 4
+(define (stream-for-n-steps stream n)
+    (if (= n 0)
+        null
+        (let ([pr (stream)])
+        (cons (car pr) (stream-for-n-steps (cdr pr) (- n 1))))))
+
+;;proble 5
+(define number-stream
+  (letrec ([f (lambda (x)
+                (if (= (remainder x 5) 0) 
+                    (cons (* x -1) (lambda () (f (+ x 1))))
+                    (cons (* x  1) (lambda () (f (+ x 1))))))])
+    (lambda () (f 1))))
+
+(define (funny-number-stream arg)
+    (stream-for-n-steps number-stream arg))

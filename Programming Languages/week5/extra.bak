@@ -1,0 +1,14 @@
+#lang racket
+
+(provide (all-defined-out)) ;; so we can put tests in a second file
+;; Created by mike meng , mml1106@outlook.com
+;; Author: mike meng
+;; Date: 2020.7.10
+;; put your code below
+(define (palindromic xs)
+    (let ([len (length xs)])
+        (letrec ([f (lambda (x) 
+                       (if (= x len)
+                           null
+                           (cons (+ (car xs) (car (list-tail xs (- len (+ x 1))))))))])
+                (f 0))))

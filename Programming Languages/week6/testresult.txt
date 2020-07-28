@@ -1,0 +1,15 @@
+文件名：Homework 5
+44/100分数：44（满分 100）
+隐藏 评分反馈
+评分反馈
+eval-exp: recursive function call (call first arg applied to non-closure) [error]
+eval-exp: complex call expression (call first arg applied to non-closure) [error]
+mupl-map: multiple element list (found bad MUPL expression: "notice") [error]
+mupl-map: single element list (found bad MUPL expression: "notice") [error]
+mupl-map: empty list (found bad MUPL expression: "notice") [error]
+mupl-mapAddN: multiple element list (found bad MUPL expression: "notice") [error]
+mupl-mapAddN: single element list (found bad MUPL expression: "notice") [error]
+mupl-mapAddN: empty list (found bad MUPL expression: "notice") [error]
+compute-free-vars: correctly computes free vars [incorrect answer]
+compute-free-vars: no free vars case [incorrect answer]
+eval-under-env-c: correctly filters closure environments [incorrect answer]
