@@ -22,10 +22,21 @@
  * Screen and Keyboard chip specifications given in the book.
  */
 
+
 CHIP Memory {
     IN in[16], load, address[15];
     OUT out[16];
 
     PARTS:
     // Put your code here:
+    //load mux
+    DMux(in = load, sel = address[14] , a = loadram , b = loadmm);
+    DMux(in = loadmm, sel = address[13], a = loadscreen, b = loadkeyboard);
+    RAM16K(in = in,load = loadram,address = address[0..13] , out = outram);
+    Screen(in = in,load = loadscreen,address = address[0..12] , out = outscreen);
+    Keyboard(out = outkeyboard);
+
+    //out mux
+    Mux16(a = outscreen, b = outkeyboard, sel = address[13], out = outmm);
+    Mux16(a = outram, b = outmm, sel = address[14], out = out);
 }

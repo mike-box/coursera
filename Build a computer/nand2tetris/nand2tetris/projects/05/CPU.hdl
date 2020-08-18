@@ -26,7 +26,6 @@
  */
 
 CHIP CPU {
-
     IN  inM[16],         // M value input  (M = contents of RAM[A])
         instruction[16], // Instruction for execution
         reset;           // Signals whether to re-start the current
@@ -40,4 +39,44 @@ CHIP CPU {
 
     PARTS:
     // Put your code here:
+    //A Instruction
+    Not(in = instruction[15], out = loadA);
+
+    //C Instruction
+    Mux16(a = Addr, b = inM, sel = instruction[12], out = outAM);
+    ALU(x = outD, y = outAM, zx = instruction[11], nx = instruction[10],zy = instruction[9],ny = instruction[8],f = instruction[7], no = instruction[6], out = outC, out = outM,zr = outZr, ng = outNg);
+    
+    //store compute result
+    DMux8Way(in = true, sel = instruction[3..5], a = selnull, b = selM, c = selD, d = selMD, e = selA, f = selAM, g = selAD, h = selAMD);
+    
+    //store M 
+    Or8Way(in[0] = selM, in[1] = selMD, in[2] = selMD, in[3] = selAMD,in[4..7] = false, out = storeM);
+    And(a = storeM, b = instruction[15], out = writeM);
+
+    //store D
+    Or8Way(in[0] = selD, in[1] = selMD, in[2] = selAD, in[3] = selAMD,in[4..7] = false, out = storeD);
+    And(a = storeD, b = instruction[15], out = writeD);
+    DRegister(in = outC ,load = writeD, out = outD);
+
+    //store A
+    Or8Way(in[0] = selA, in[1] = selAM, in[2] = selAD, in[3] = selAMD,in[4..7] = false, out = storeA);
+    Mux16(a[15] = false,a[0..14] = instruction[0..14], b = outC, sel = instruction[15], out = outAddr);
+    Or(a = loadA, b = storeA, out = writeA);
+    ARegister(in = outAddr, load = writeA, out = Addr,out[0..14] = addressM);
+
+    //Jump PC
+    DMux8Way(in = instruction[15],sel = instruction[0..2], a = JNULL, b = JGT, c = JEQ, d = JGE, e = JLT, f = JNE, g = JLE, h = JMP);
+    Not(in = outZr, out = notZero);
+    Not(in = outNg, out = notNeg);
+    And(a = JEQ, b = outZr, out = loadEQ);
+    And(a = JNE, b = notZero, out = loadNE);
+    And(a = JLT, b = outNg, out = loadLT);
+    And(a = JGE, b = notNeg, out = loadGE);
+    And(a = notZero, b = notNeg, out = outGT);
+    And(a = outGT, b = JGT, out = loadGT);
+    Or(a = outZr, b = outNg, out = outLE);
+    And(a = outLE, b = JLE, out = loadLE);
+    Or8Way(in[0] = loadGT, in[1] = loadEQ, in[2] = loadGE, in[3] = loadLT, in[4] = loadNE, in[5] = loadLE, in[6] = JMP, in[7] = false, out = loadPC);
+    PC(in = Addr,load = loadPC,inc = true,reset = reset, out[0..14] = pc);
 }
+
