@@ -58,7 +58,7 @@ set RAM[297] -1,
 set RAM[298] -1,
 set RAM[299] -1,
 
-repeat 4000 {
+repeat 2000 {
   ticktock;
 }
 
