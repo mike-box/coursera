@@ -1,0 +1,212 @@
+function Queue.new 0
+push constant 5
+call Memory.alloc 1
+pop pointer 0
+push argument 0
+pop this 1
+push constant 0
+pop this 3
+push constant 0
+pop this 2
+push argument 0
+call Memory.alloc 1
+pop this 0
+push constant 0
+pop this 4
+push pointer 0
+return
+function Queue.dispose 0
+push argument 0
+pop pointer 0
+push this 0
+call Array.dispose 1
+pop temp 0
+push pointer 0
+call Memory.deAlloc 1
+pop temp 0
+push constant 0
+return
+function Queue.isEmpty 0
+push argument 0
+pop pointer 0
+push this 2
+push this 3
+eq
+return
+function Queue.size 0
+push argument 0
+pop pointer 0
+push this 4
+return
+function Queue.isFull 1
+push argument 0
+pop pointer 0
+push this 2
+push constant 1
+add
+push this 1
+call Snake.mod 2
+pop local 0
+push local 0
+push this 3
+eq
+return
+function Queue.push_back 0
+push argument 0
+pop pointer 0
+push pointer 0
+call Queue.isFull 1
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+return
+label IF_FALSE0
+push this 4
+push constant 1
+add
+pop this 4
+push this 2
+push this 0
+add
+push argument 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push this 2
+push constant 1
+add
+push this 1
+call Snake.mod 2
+pop this 2
+push constant 0
+not
+return
+function Queue.push_front 0
+push argument 0
+pop pointer 0
+push pointer 0
+call Queue.isFull 1
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+return
+label IF_FALSE0
+push this 4
+push constant 1
+add
+pop this 4
+push this 3
+push constant 1
+sub
+push this 1
+add
+push this 1
+call Snake.mod 2
+pop this 3
+push this 3
+push this 0
+add
+push argument 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 0
+not
+return
+function Queue.pop_front 1
+push argument 0
+pop pointer 0
+push pointer 0
+call Queue.isEmpty 1
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 1
+neg
+return
+label IF_FALSE0
+push this 3
+push this 0
+add
+pop pointer 1
+push that 0
+pop local 0
+push this 3
+push constant 1
+add
+push this 1
+call Snake.mod 2
+pop this 3
+push this 4
+push constant 1
+sub
+pop this 4
+push local 0
+return
+function Queue.pop_back 1
+push argument 0
+pop pointer 0
+push pointer 0
+call Queue.isEmpty 1
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 1
+neg
+return
+label IF_FALSE0
+push this 4
+push constant 1
+sub
+pop this 4
+push this 2
+push constant 1
+sub
+push this 1
+add
+push this 1
+call Snake.mod 2
+pop this 2
+push this 2
+push this 0
+add
+pop pointer 1
+push that 0
+return
+function Queue.print 2
+push argument 0
+pop pointer 0
+push this 4
+pop local 0
+label WHILE_EXP0
+push local 0
+push constant 0
+eq
+not
+not
+if-goto WHILE_END0
+push pointer 0
+call Queue.pop_front 1
+pop local 1
+push local 1
+call Output.printInt 1
+pop temp 0
+push constant 32
+call Output.printChar 1
+pop temp 0
+push pointer 0
+push local 1
+call Queue.push_back 2
+pop temp 0
+push local 0
+push constant 1
+sub
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0
+push constant 0
+return

@@ -1,0 +1,99 @@
+/* GluttonousSnake */
+/* created by mike meng @ 2020.10.3
+*  email: mml1106@126.com
+*/
+class SnakeGame {
+   field Snake snake; // the square of this game
+   field int width; // the current score of the snake game.
+   field int height; // the current score of the snake game.
+   field int speed; // the current move speed of the snake game.
+
+   /** Constructs a new Square Game. */
+   constructor SnakeGame new(int w,int h) {
+      let snake = Snake.new(w,h);
+      let speed = 1;  // initial state is no movement
+      return this;
+   }
+
+   /** Disposes this game. */
+   method void dispose() {
+      do snake.dispose();
+      do Memory.deAlloc(this);
+      return;
+   }
+
+   /**speed up game**/
+   method void speedUp(){
+      let speed = speed + 1;
+      return;
+   }
+
+   /**speed down game**/
+   method void speedDown(){
+      if(speed = 1) {return;}
+      let speed = speed - 1;
+      return;
+   }
+
+   /** Moves the square in the current direction. */
+   method void moveSnake() {
+      do snake.move();
+      do Sys.wait(5);  // delays the next movement
+      return;
+   }
+
+   method void sleep(int seconds){
+      do Sys.wait(200/speed);
+      return;
+   }
+
+   method void drawBackgroud(){
+      do Screen.setColor(true);
+      do Screen.drawLine(0,0,0,255);
+      do Screen.drawLine(0,0,511,0);
+      do Screen.drawLine(511,0,511,255);
+      do Screen.drawLine(0,255,511,0255);
+      do Screen.drawLine(0,30,511,30);
+      return;
+   }
+
+   method void drawText(){
+      do Screen.setColor(true);
+      do Output.moveCursor(0,20);
+      do Output.printString("Your score is :");
+      do Output.printInt(snake.getScore());
+      if(snake.isOver()){
+         do Output.moveCursor(1,24);
+         do Output.printString("Game Over!");
+      }
+      return;
+   }
+
+   /** Runs the game: handles the user's inputs and moves the square accordingly */
+   method void run() {
+      var char key;  // the key currently pressed by the user
+      var boolean exit;
+      let exit = false;
+
+      while (~exit) {
+         // waits for a key to be pressed
+         do sleep(1);
+         do drawBackgroud();
+         do moveSnake();
+         do drawText();
+
+         let key = Keyboard.keyPressed();
+         if (key = 81)  { let exit = true; }     // q key
+         if (key = 43)  { do speedUp();}         // speed up
+         if (key = 45)  { do speedDown();}       // speed down
+         if (key = 131) { do snake.moveUp();}    // up arrow
+         if (key = 133) { do snake.moveDown(); }   // down arrow
+         if (key = 130) { do snake.moveLeft(); }   // left arrow
+         if (key = 132) { do snake.moveRight(); }   // right arrow
+     } // while
+     return;
+   }
+}
+
+
+

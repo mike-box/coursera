@@ -1,0 +1,14 @@
+/*
+* created by mike meng @ 2020.10.6
+* email: mml1006@126.com
+*/
+/** Initializes a snake game and starts running it. */
+class Main {
+    function void main() {
+        var SnakeGame game;
+        let game = SnakeGame.new(32,14);
+        do game.run();
+        do game.dispose();
+        return;
+    }
+}

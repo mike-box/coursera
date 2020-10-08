@@ -1,0 +1,13 @@
+function Main.main 1
+push constant 32
+push constant 14
+call SnakeGame.new 2
+pop local 0
+push local 0
+call SnakeGame.run 1
+pop temp 0
+push local 0
+call SnakeGame.dispose 1
+pop temp 0
+push constant 0
+return

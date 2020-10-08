@@ -1,0 +1,91 @@
+/* GluttonousSnake */
+/* created by mike meng @ 2020.10.3
+*  email: mml1106@126.com
+*/
+class Queue {
+    field Array buffer;
+    field int capbility;
+    field int rear;
+    field int front;
+    field int length;
+
+    constructor Queue new(int size){
+        let capbility = size;
+        let front = 0;
+        let rear = 0;
+        let buffer = Memory.alloc(size);
+        let length = 0;
+        return this;
+    }
+
+    method void dispose(){
+        do buffer.dispose(); 
+        do Memory.deAlloc(this);
+        return;
+    }
+
+    method boolean isEmpty(){
+        return (rear = front);
+    }
+
+    method int size(){
+        return length;
+    }
+
+    method boolean isFull(){
+        var int check;
+        let check = Snake.mod(rear + 1,capbility);
+        return (check = front);
+    }
+
+    method boolean push_back(int val){
+        /*check the Queue is Full*/
+        if(isFull()){return false;}
+        let length = length + 1;
+        let buffer[rear] = val;
+        let rear = Snake.mod(rear + 1,capbility);
+        return true;
+    }
+
+    method boolean push_front(int val){
+        /*check the Queue is Full*/
+        if(isFull()){ return false;}
+        let length = length + 1;
+        let front = Snake.mod(front - 1 + capbility,capbility);
+        let buffer[front] = val;
+        return true;
+    }
+
+    method int pop_front(){
+        var int res;
+        if(isEmpty()){return -1;}
+        let res = buffer[front];
+        let front = Snake.mod(front + 1,capbility);
+        let length = length - 1;
+        return res;
+    }
+
+    method int pop_back(){
+        var int res;
+        /*check the Queue is Full*/
+        if(isEmpty()){return -1;}
+        let length = length - 1;
+        let rear = Snake.mod(rear - 1 + capbility,capbility);
+        return buffer[rear];
+    }
+
+    method void print(){
+        var int curr;
+        var int data;
+        /*debug all elements of the queue*/
+        let curr = length;
+        while(~(curr = 0)){
+            let data = pop_front();
+            do Output.printInt(data);
+            do Output.printChar(32); // prints a space
+            do push_back(data);
+            let curr = curr - 1;
+        }
+        return;
+    }
+}

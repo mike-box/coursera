@@ -7,11 +7,15 @@
 class List {
     field int data;          // a list consists of a data field,
     field List next;         // followed by a list
+    field List prev;
 
     /* Creates a List. */
     constructor List new(int car, List cdr) {
         let data = car;       // the identifiers car and cdr are used in 
         let next = cdr;       // memory of the Lisp programming language
+        if(~(cdr = null)){
+            
+        }
         return this;
     }
 

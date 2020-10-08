@@ -1,0 +1,267 @@
+/* GluttonousSnake */
+/* created by mike meng @ 2020.10.3
+*  email: mml1106@126.com
+*/
+class Snake {
+   field int row;//
+   field int col;//width
+   field int bsize;//square size
+   field Array head; /*snake Queuehead*/
+   field Queue foods; /*current foods*/
+   field int foodCount; // food number count
+   field Queue body; // current snake body;
+   field int speed; //snake speed
+   field Array mask;// direction mask
+   field int direction; /*-1: none, 0: up, 1: right, 2 : down, 3 : left*/
+   field int state;  //current state;
+   field int score;  //current score;
+
+   /** Constructs a new square with a given location and size. */
+   constructor Snake new(int w,int h){
+      var int i;
+      var int val;
+
+      /*matrix height & width*/
+      let row = h;
+      let col = w;
+      let bsize = 16;
+
+      /*game state: 0: runing, 1: game over*/
+      let state = 0;
+
+      /*snake head*/
+      let head = Array.new(2);
+      let head[0] = 0;
+      let head[1] = 0;
+      do drawBlock(0,0);
+
+      /*snake foods*/
+      let foods = Queue.new(100);
+      let i = 20;
+      do Random.seed(1);
+      while(~(i = 0)){
+         let val = Snake.mod(Random.next(),row*col);
+         do foods.push_back(val);
+         //do Snake.debug(val);
+         do drawFood(val);
+         let i = i - 1;
+      }
+      
+      /*snake body*/
+      let body = Queue.new(row*col);
+      do body.push_back(0);
+
+      /*snake direction*/
+      /*-1: none, 0: up, 1: right, 2 : down, 3 : left*/
+      let mask = Array.new(5);
+      let direction = 1;
+      let mask[0] = -1;
+      let mask[1] =  0;
+      let mask[2] =  1;
+      let mask[3] =  0;
+      let mask[4] = -1; 
+
+      /*snake score*/
+      let score = 0;
+
+      return this;
+   }
+
+   /** Disposes this square. */
+   method void dispose() {
+      do head.dispose();
+      do foods.dispose();
+      do body.dispose();
+      do mask.dispose();
+      do Memory.deAlloc(this);
+      return;
+   }
+
+   /*math  mod function*/
+   function int mod(int m,int n){
+      return (m - ((m/n)*n));
+   }
+
+   /** game is over**/
+   method boolean isOver(){
+      return state = 1;
+   }
+
+   /** snake move up **/
+   method void moveUp() {
+      if(direction = 2){return;}
+      let direction = 0;
+      return;
+   }
+   
+   /** snake move down **/
+   method void moveDown() {
+      if(direction = 0){return;}
+      let direction = 2;
+      return;
+   }
+
+   /** snake move left **/
+   method void moveLeft() {
+      if(direction = 1){return;}
+      let direction = 3;
+      return;
+   }
+
+   /** snake move right **/
+   method void moveRight() {
+      if(direction = 3){return;}
+      let direction = 1;
+      return;
+   }
+
+   /*draw a block*/
+   method void drawBlock(int rx,int cx){
+      do Screen.setColor(true);
+      do Screen.drawRectangle(cx*16,(rx+2)*16,cx*16 + 15,(rx+2)*16 + 15);
+      return;
+   }
+
+   /*erase a block*/
+   method void eraseBlock(int location){
+      var int rx;
+      var int cx;
+
+      let rx = location/col;
+      let cx = Snake.mod(location,col);
+      do Screen.setColor(false);
+      do Screen.drawRectangle(cx*16,(rx+2)*16,cx*16 + 15,(rx+2)*16 + 15);
+      return;
+   }
+
+   /*debug*/
+   function void debug(int x){
+      do Screen.setColor(true);
+      do Output.moveCursor(0,0);
+      do Output.printInt(x);
+      return;
+   }
+
+   /*draw a food*/
+   method void drawFood(int location){
+      var int rx;
+      var int cx;
+
+      let rx = location/col;
+      let cx = Snake.mod(location,col);
+      do Screen.setColor(true);
+      do Screen.drawLine(cx*16,(rx+2)*16,cx*16 + 15,(rx+2)*16);
+      do Screen.drawLine(cx*16,(rx+2)*16,cx*16,(rx+2)*16 + 15);
+      do Screen.drawLine(cx*16,(rx+2)*16,cx*16 + 15,(rx+2)*16 + 15);
+      do Screen.drawLine(cx*16,(rx+2)*16 + 15,cx*16 + 15,(rx+2)*16 + 15);
+      do Screen.drawLine(cx*16+15,(rx+2)*16,cx*16 + 15,(rx+2)*16 + 15);
+      do Screen.drawLine(cx*16+15,(rx+2)*16,cx*16,(rx+2)*16 + 15);
+      return;
+   }
+
+   /*draw snake head*/
+   method void drawHead(int rx,int cx){
+      do Screen.setColor(true);
+      do Screen.drawLine(cx*16,(rx+2)*16,cx*16 + 15,(rx+2)*16 + 15);
+      do Screen.drawLine(cx*16+15,(rx+2)*16,cx*16,(rx+2)*16 + 15);
+      return;
+   }
+
+   /*snake move one step*/
+   method boolean move() {
+      var int x;
+      var int y;
+      var int i;
+      var int val;
+      var int rx;
+      var int cx;
+      var boolean eat;
+
+      if(isOver()){ return false;}
+      if(direction < 0){ return true;}
+      
+      /*get the current move location*/
+      let x = head[0] + mask[direction];
+      let y = head[1] + mask[direction + 1];
+      let i = 0;
+
+      /*check the snake will touch the edge*/
+      if((x < 0)|(y < 0)|(x = row)|(y = col)){
+         let state = 1;
+         return false;
+      }
+
+      /*check the snake will touch the body*/
+      let i = body.size();
+      while(~(i = 0)){
+         let val = body.pop_front();
+         let i = i - 1;
+         let rx = val/col;
+         let cx = Snake.mod(val,col);
+         if((rx = x) & (cx = y)){
+            let state = 1;
+            return false;
+         }
+         do body.push_back(val);
+      }
+      if(isOver()){ return false;}
+
+      /*check the snake touch the foods*/
+      let i = foods.size();
+      while(~(i = 0)){
+         let i = i - 1;
+         let val = foods.pop_front();
+         let rx = val/col;
+         let cx = Snake.mod(val,col);
+         if((rx = x) & (cx = y)){
+            let eat = true;
+            let score = score + 1;
+         }else{
+            do foods.push_back(val);
+         }
+      }
+
+      /*move snake one step*/
+      let head[0] = x;
+      let head[1] = y;
+      do drawBlock(x,y);
+      do body.push_front(x*col + y);
+      if(~eat){
+         do eraseBlock(body.pop_back());
+      }else{
+         /*we can produce a random food for the snake*/
+         //do prodFood();
+      }
+
+      return true;
+   }
+
+   method int prodFood(){
+      var boolean valid;
+      var int location;
+      var int val;
+      var int i;
+
+      let valid = false;
+      while(~valid){
+         let location = Snake.mod(Random.next(),row*col);
+         let i = body.size();
+         let valid = true;
+         while(~(i=0)){
+            let val = body.pop_front();
+            do body.push_back(val);
+            if(val = location){
+               let valid = false;
+            }
+         } 
+      }
+      do drawFood(location);
+      do foods.push_back(location);
+      return location;
+   }
+
+   /*get the game score*/
+   method int getScore(){
+      return score;
+   }
+}
