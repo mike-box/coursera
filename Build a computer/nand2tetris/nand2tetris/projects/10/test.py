@@ -1,0 +1,31 @@
+from enum import Enum
+
+class KEYWORD_TYPE(Enum):
+    KEYWORD_CLASS = 101
+    KEYWORD_METHOD = 102
+    KEYWORD_FUNCTION = 103
+    KEYWORD_CONSTRUCTOR = 104
+    KEYWORD_BOOLEAN = 105
+    KEYWORD_CHAR = 106
+    KEYWORD_VOID = 107
+    KEYWORD_VAR = 108
+    KEYWORD_STATIC = 109
+    KEYWORD_FIELD = 110
+    KEYWORD_LET = 111
+    KEYWORD_DO = 112
+    KEYWORD_IF = 113
+    KEYWORD_WHILE = 114
+    KEYWORD_RETURN = 115
+    KEYWORD_TRUE = 116
+    KEYWORD_FALSE = 117
+    KEYWORD_NULL = 118
+    KEYWORD_THIS = 119
+
+
+s = [name for name, member in KEYWORD_TYPE.__members__.items()]
+print(s)
+str = "123456"
+print(str[1:-1])
+_ = 10
+print(_)
+    
