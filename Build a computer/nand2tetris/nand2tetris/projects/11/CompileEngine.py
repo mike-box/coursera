@@ -4,7 +4,7 @@ import sys, getopt
 from enum import Enum, unique
 import sys
 
-class CompilationEngine:
+class CompileEngine:
     def __init__(self,infile):
         # read all source code string to the buffer
         self.parser = JackTokenizer(infile)
@@ -853,7 +853,7 @@ class CompilationEngine:
         return
 
 def main(input):
-    parser = CompilationEngine(input)
+    parser = CompileEngine(input)
 
 if __name__ == "__main__":
     main(sys.argv[1])

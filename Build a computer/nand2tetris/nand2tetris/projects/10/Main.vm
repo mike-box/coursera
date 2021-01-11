@@ -1,0 +1,14 @@
+push const 5
+push const 2
+push const 3
+ist.new 2
+pop local 0
+call List.new 2
+call List.new 2
+pop local 0
+call List.print 0
+pop temp 0
+call List.dispose 0
+pop temp 0
+push constant 0
+return

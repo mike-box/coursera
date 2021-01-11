@@ -72,7 +72,14 @@ def validIdentifiers(val):
         if not (val[i] == '_' or isAlpha(val[i]) or isDigit(val[i])):
             return False
     return True
-    
+
+class Token:
+    def __init__(self,tkStr,tkType,linenum,column):
+        self.tkStr = tkStr
+        self.tkType =  tkType
+        self.linenum = linenum
+        self.column = column   
+
 class JackTokenizer:
     def __init__(self,infile):
         # read all source code string to the buffer
@@ -83,13 +90,16 @@ class JackTokenizer:
         ifs.close()
         self.end = len(self.buffer)
         self.tokens = []
-        self.linenum = []
         self.parseToken()
         self.outfile = infile[:infile.find(".jack")] + "T.xml"
         self.genToken()
 
     def parseToken(self):
         pos = 0
+        currStr = ""
+        currLine = 1
+        currColum = 1
+
         while pos < self.end:
             #we will skip space
             if self.buffer[pos] == ' ' or \
@@ -98,45 +108,63 @@ class JackTokenizer:
                 while pos < self.end and (self.buffer[pos] == ' ' or \
                                           self.buffer[pos] == '\n' or \
                                           self.buffer[pos] == '\t'):
+                    if self.buffer[pos] == '\n':
+                        currLine += 1
+                        currColum = 0
                     pos += 1
+                    currColum += 1
                 continue
         
             # we will skip the comment "//"
-            if self.buffer[pos:pos+2] == "//":
+            if pos + 1 < len(self.buffer) and self.buffer[pos:pos+2] == "//":
                 while pos < self.end and self.buffer[pos] != '\n':
+                    currColum += 1
                     pos += 1
                 continue
 
             # we will skip the comment "/* .. */"
-            if self.buffer[pos:pos+2] == "/*":
+            if pos + 1 < len(self.buffer) and self.buffer[pos:pos+2] == "/*":
+                pos += 2
+                currColum += 2
                 while pos < self.end and self.buffer[pos:pos+2] != "*/":
+                    if self.buffer[pos] == '\n':
+                        currLine += 1
+                        currColum = 0
                     pos += 1
+                    currColum += 1
                 pos += 2
                 continue
           
             # check curr token is symbol
             if self.buffer[pos] in symboldict:
-                self.tokens.append(self.buffer[pos:pos+1])
+                currStr = self.buffer[pos:pos+1]
+                self.tokens.append(Token(currStr,self.getType(currStr),currLine,currColum))
                 pos += 1
+                currColum += 1
                 continue
             
             # check string constant
             if pos < self.end and self.buffer[pos] == '"':
                 posCurr = pos
                 pos += 1
-                while pos < self.end and self.buffer[pos] != '"':
+                while pos < self.end and self.buffer[pos] != '"' and self.buffer[pos] != '\n':
                     pos += 1
+                    currColum += 1
                 pos += 1
-                self.tokens.append(self.buffer[posCurr:pos])
+                currColum += 1
+                currStr = self.buffer[posCurr:pos]
+                self.tokens.append(Token(currStr,self.getType(currStr),currLine,currColum))
                 continue
 
             # check curr token 
             posCurr = pos
             while pos < self.end and self.buffer[pos] != ' ' and \
                   self.buffer[pos] != '\n' and self.buffer[pos] not in symboldict:
+                currColum += 1
                 pos += 1
             if pos > posCurr:
-                self.tokens.append(self.buffer[posCurr:pos])
+                currStr = self.buffer[posCurr:pos]
+                self.tokens.append(Token(currStr,self.getType(currStr),currLine,currColum))
 
         return True      
     
@@ -149,10 +177,10 @@ class JackTokenizer:
         self.curr += 1
 
     def currToken(self):
-        return self.tokens[self.curr]
+        return self.tokens[self.curr].tkStr
 
     def tokenType(self):
-        return self.getType(self.tokens[self.curr])
+        return self.tokens[self.curr].tkType
         
     def getType(self,token):
         if token in keworddict:
@@ -169,44 +197,47 @@ class JackTokenizer:
             return TOKEN_TYPE.TOKEN_INVALID
 
     def keyWord(self):
-        return self.tokens[self.curr]
+        return self.tokens[self.curr].tkStr
 
     def symbol(self):
-        return self.tokens[self.curr]
+        return self.tokens[self.curr].tkStr
     
     def identifier(self):
-        return self.tokens[self.curr]
+        return self.tokens[self.curr].tkStr
     
     def intVal(self):
-        return self.tokens[self.curr]
+        return self.tokens[self.curr].tkStr
     
     def stringVal(self):
-        return self.tokens[self.curr][1:-1]
+        return self.tokens[self.curr].tkStr[1:-1]
     
     def genToken(self):
         out =  open(self.outfile,"w")
         out.write("<tokens>\n")
         for token in self.tokens:
-            t = self.getType(token)
+            t = token.tkType
+            s = token.tkStr
+            row = token.linenum
+            col = token.column 
             if t == TOKEN_TYPE.TOKEN_KEYWORD:
                 out.write("<keyword> ")
-                out.write(token)
+                out.write(s)
                 out.write(" </keyword>\n")
             elif t == TOKEN_TYPE.TOKEN_SYMBOL:
                 out.write("<symbol> ")
-                out.write(token)
+                out.write(s)
                 out.write(" </symbol>\n")
             elif t == TOKEN_TYPE.TOKEN_INT_CONST:
                 out.write("<integerConstant> ")
-                out.write(token)
+                out.write(s)
                 out.write(" </integerConstant>\n")
             elif t == TOKEN_TYPE.TOKEN_STRING_CONST:
                 out.write("<stringConstant> ")
-                out.write(token[1:-1])
+                out.write(s[1:-1])
                 out.write(" </stringConstant>\n")
             elif t == TOKEN_TYPE.TOKEN_IDENTIFIER:
                 out.write("<identifier> ")
-                out.write(token)
+                out.write(s)
                 out.write(" </identifier>\n")
         out.write("</tokens>\n")
         out.close()

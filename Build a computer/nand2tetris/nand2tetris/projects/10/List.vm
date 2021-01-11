@@ -1,0 +1,68 @@
+push const 32
+ew 0
+push constant 3
+call Memory.alloc 1
+pop pointer 0
+push argument 0
+pop this 0
+push argument 1
+pop this 1
+push argument 1
+push const 0
+eq
+not
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0label IF_FALSE0push argument 0
+pop pointer 0
+push pointer 0
+return
+function List.getData 0
+push argument 0
+pop pointer 0
+push this 0
+return
+function List.getNext 0
+push argument 0
+pop pointer 0
+push this 1
+return
+function List.print 1
+push argument 0
+pop pointer 0
+push pointer 0
+pop local 0
+label WHILE_EXP0push local 0
+push const 0
+eq
+not
+not
+if-goto WHILE_END0
+call List.getData 0
+call Output.printInt 1
+pop temp 0
+call Output.printChar 1
+pop temp 0
+call List.getNext 0
+pop local 0
+goto WHILE_EXP0
+label WHILE_END0push constant 0
+return
+function List.dispose 0
+push argument 0
+pop pointer 0
+push this 1
+push const 0
+eq
+not
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1call List.dispose 0
+pop temp 0
+label IF_FALSE1push argument 0
+pop pointer 0
+push pointer 0
+call Memory.deAlloc 1
+pop temp 0
+push constant 0
+return
