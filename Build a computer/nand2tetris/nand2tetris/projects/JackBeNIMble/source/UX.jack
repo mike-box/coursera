@@ -1,0 +1,295 @@
+// Jack Be NIMble was programmed by Wayne Heller
+// All Rights Reserved. January 2021
+// Source: https://github.com/wayneheller/nand2tetris
+
+/** User experience functions for Jack Be NIMble Game 
+    Gets user input and does basic validation
+    Display message and graphics to the screen */
+
+class UX {
+
+	function void displayInstructions() {	// displays the game instructions at startup
+		var char c;
+		var String msg;
+
+		do Output.moveCursor(0,25);
+		let msg = "Jack Be NIMble";
+		do Output.printString(msg);
+	    do Output.println();
+	    do Output.println();
+	    let msg = "* Jack Be NIMble is an inactive game where you and the computer take turns removing items from heaps.";
+	    do Output.printString(msg);
+	    do Output.println(); do Output.println();
+	    let msg = "* The player who removes the last item from the last heap either wins or loses depending on the game type.";
+	    do Output.printString(msg);
+	 	do Output.println(); do Output.println();
+	 	let msg = "* At the start of the game, you will be asked to define";
+	 	do Output.printString(msg); do Output.println();
+	 	let msg = "the number of heaps and the number of items in each heap.";
+	 	do Output.printString(msg);
+	 	do Output.println(); do Output.println();
+	 	let msg = "* You will also define whether picking the last item wins";
+	 	do Output.printString(msg); do Output.println();
+	 	let msg = "or loses the game";
+	 	do Output.printString(msg);
+
+		do Output.moveCursor(22,0);
+		let msg = "Press any key to continue...";
+	 	do Output.printString(msg);
+		let c = Keyboard.readChar();
+
+		do msg.dispose();
+
+		return;
+	}
+
+    function int getNumHeaps() {
+    	var int numHeaps;
+    	let numHeaps = 0;
+    	do Output.moveCursor(0,0);
+    	while ((numHeaps < 2) | (numHeaps > 6)) {
+    		let numHeaps = Keyboard.readInt("Please enter the number of heaps (2-6): ");
+    	}
+    	
+    	return(numHeaps);
+    }
+
+    function int getHeapSize(int idxHeap) {
+    	var int heapSize;
+    	var String msg;
+    	var String s;
+    	var char c;
+
+    	let msg = "Please enter the size (2-9) of heap  : ";
+    	let s = String.new(8);									// create a new string for the integer to string conversion
+    	do s.setInt(idxHeap+1);									// convert heap index to a string
+    	let c = s.charAt(0);									// convert it again to an char
+    	do msg.setCharAt(msg.length() - 3, c);					// replace the 3 character from the end with the heap index
+    	let heapSize = 0;
+    	 while ((heapSize < 2) | (heapSize > 9)) {
+    		let heapSize = Keyboard.readInt(msg);
+    	} 
+    	do msg.dispose();
+    	do s.dispose();
+
+    	return(heapSize);
+    }
+
+    function int getGameType() {
+    	var int gameType;
+    	var String msg;
+
+    	do Output.println();
+    	let msg = "Game Type Descriptions:";
+    	do Output.printString(msg);
+    	do Output.println(); do Output.println();
+    	let msg = "0 = Player removing last item off last heap WINS";
+    	do Output.printString(msg);
+    	do Output.println(); do Output.println();
+    	let msg = "1 = Player removing last item off last heap LOSES";
+    	do Output.printString(msg);
+    	do Output.println(); do Output.println();
+
+    	let gameType = 3;
+    	while ((gameType < 0) | (gameType > 1)) {
+    		do Output.moveCursor(22,0);
+    		let gameType = Keyboard.readInt("Please enter Game Type (0 or 1): ");
+    	}
+
+    	do msg.dispose();
+
+    	return(gameType);
+    }
+
+    function int getHeap(int numHeaps) {
+    	var int idxHeap;
+    
+    	let idxHeap = numHeaps + 2;
+    	while ((idxHeap < 1) | (idxHeap > (numHeaps))) {
+    		do Output.moveCursor(22,0);
+    		let idxHeap = Keyboard.readInt("Please enter the heap you want to reduce: ");
+    	}
+    	return(idxHeap - 1);	// indexes are 0 based internally and 1 based for the UX
+    
+    }
+
+    function void displayErrHeapEmpty(int idxHeap) {
+    	var String msg, s;
+    	var char c;
+
+    	let msg = "Heap # x is empty. Please choose a different heap.";
+    	let s = String.new(8);									// create a new string for the integer to string conversion
+    	do s.setInt(idxHeap+1);									// convert heap index to a string
+    	let c = s.charAt(0);									// convert it again to an char
+    	do msg.setCharAt(7, c);									// replace # with heap index
+
+    	do Output.moveCursor(21,0);
+    	do Output.printString(msg);
+
+    	do msg.dispose();
+    	do s.dispose();
+
+    	return;
+    }
+
+    function void clearErrHeapEmpty() {
+    	var String msg;
+    	let msg = "                                                 ";
+    	do Output.moveCursor(21,0);
+    	do Output.printString(msg);
+    	do msg.dispose();
+    	return;
+    }
+
+    function int getNumToRemove(int heapSize, int idxHeap) {
+    	var int itemsToRemove;
+    	var String msg, s;
+    	var char c;
+
+    	let msg = "Enter the number of items (1 to x) to remove from heap y: ";
+
+    	let s = String.new(8);									// create a new string for the integer to string conversion
+    	do s.setInt(idxHeap+1);									// convert heap index to a string
+    	let c = s.charAt(0);									// convert it again to an char
+    	do msg.setCharAt(msg.length() - 3, c);					// replace the 3 character from the end with the heap index
+
+    	let s = String.new(8);									// create a new string for the integer to string conversion
+    	do s.setInt(heapSize);							        // convert heap size to a string
+    	let c = s.charAt(0);									// convert it again to an char
+    	do msg.setCharAt(32, c);								// replace the x character with the heap size
+
+    	let itemsToRemove = 0;
+    	 while ((itemsToRemove < 1) | (itemsToRemove > heapSize)) {
+    	 	do Output.moveCursor(22,0);
+    		let itemsToRemove = Keyboard.readInt(msg);
+    	} 
+    	do msg.dispose();
+    	do s.dispose();
+
+    	return(itemsToRemove);
+
+    }
+
+    function void displayWin() {
+    	var String msg;
+    	let msg = "CONGRATULATIONS!  YOU WIN!!!  ";
+    	do Output.moveCursor(19,0);
+    	do Output.printString(msg);
+    	do msg.dispose();
+    	return;
+    }
+
+    function void displayLoss() {
+    	var String msg;
+    	let msg = "GOOD GAME!  BUT I ABSOLUTELY CRUSHED YOU!";
+    	do Output.moveCursor(19,0);
+    	do Output.printString(msg);
+    	do msg.dispose();
+    	return;
+    }
+
+    function void displayMove(int itemsRemoved, int idxHeap) {
+    	var String msg, s;
+    	var char c;
+
+    	let msg = "I removed x items from Heap y.";
+
+    	let s = String.new(8);									// create a new string for the integer to string conversion
+    	do s.setInt(itemsRemoved);							    // convert items removed to a string
+    	let c = s.charAt(0);									// convert it again to an char
+    	do msg.setCharAt(10, c);								// replace the x character with the items removed
+
+    	let s = String.new(8);									// create a new string for the integer to string conversion
+    	do s.setInt(idxHeap+1);							        // convert items removed to a string
+    	let c = s.charAt(0);									// convert it again to an char
+    	do msg.setCharAt(msg.length() - 2, c);					// replace the x character with the items removed
+
+    	do Output.moveCursor(19,0);
+    	do Output.printString(msg);
+    	do Output.moveCursor(22,0);
+
+    	do Sys.wait(3500);
+    	do msg.dispose();
+    	do s.dispose();
+
+    	return;
+    }
+
+    function boolean getPlayAgain() {
+    	var char c;
+    	var String msg;
+
+    	do Output.moveCursor(22,0);
+    	let msg = "Do you want to Play Again?  y for Yes; Any key for No: ";
+    	do Output.printString(msg);
+    	let c = Keyboard.readChar();
+
+    	do msg.dispose();
+
+    	return((c = 89)); // 89 is the character code for Y.  It appears that the runtime converts characters to uppercase so y and Y return same thing.
+    	
+    }
+
+    function boolean getUsePredefined() {
+    	var char c;
+    	var String msg;
+
+    	do Output.moveCursor(19,0);
+    	let msg = "Do you want to use a preset configuration for";
+    	do Output.printString(msg); do Output.println();
+    	let msg = "the number of heaps, heap sizes and game type?";
+    	do Output.printString(msg);
+    	do Output.moveCursor(22,0);
+    	let msg = "Enter  y for Yes; Any key for No: ";
+    	do Output.printString(msg);
+    	let c = Keyboard.readChar();
+
+    	do msg.dispose();
+
+    	return((c = 89)); // 89 is the character code for Y.  It appears that the runtime converts characters to uppercase so y and Y return same thing.
+    }
+
+    function boolean getUseLastConfig() {
+    	var char c;
+    	var String msg;
+
+    	do Output.moveCursor(19,0);
+    	let msg = "Do you want to use the configuration of";
+    	do Output.printString(msg); do Output.println();
+    	let msg = "heaps, sizes and game type from the last game?";
+    	do Output.printString(msg);
+    	do Output.moveCursor(22,0);
+    	let msg = "Enter  y for Yes; Any key for No: ";
+    	do Output.printString(msg);
+    	let c = Keyboard.readChar();
+
+    	do msg.dispose();
+
+    	return((c = 89)); // 89 is the character code for Y.  It appears that the runtime converts characters to uppercase so y and Y return same thing.
+    }
+
+    function void drawTallyMark(int row, int col) {
+    	var int x1, y1;
+
+    	let y1 = 11 * row;  // roughly 256 pixils / 23 rows
+    	let x1 = 8 * col;   // 512 pixils / 64 cols
+
+    	do Screen.drawRectangle(x1, y1, x1 + 1, y1 + 16);
+
+    	return;
+
+    }
+
+    function void displayCredits() {
+    	do Screen.clearScreen();
+      	do Output.moveCursor(0,25);
+      	do Output.printString("Jack Be NIMble"); do Output.println(); do Output.println();
+    	do Output.printString("For more information about the Game Theory of NIM:"); do Output.println();
+    	do Output.printString("https://en.wikipedia.org/wiki/Nim"); do Output.println(); do Output.println();do Output.println();
+    	do Output.printString("Jack Be NIMble was coded by Wayne Heller January 2021"); do Output.println();
+    	do Output.printString("Source: https://github.com/wayneheller/nand2tetris");
+
+    	return;
+
+    }
+}   

@@ -4,7 +4,20 @@
 #include <unordered_map>
 #include <map>
 #include <fstream>
-#include "vmTranslator.hpp"
+#include <sstream>
+#ifdef _WIN32
+#include <io.h>
+#else
+#include <sys/io.h>
+#include <dirent.h>
+#endif
+#include <sys/stat.h>
+#include "VMTranslator.hpp"
+#include <stdlib.h>
+#include <stdio.h>
+#include <limits.h>
+#include <algorithm>
+
 
 using namespace std;
 
@@ -43,16 +56,16 @@ static void debugEnable(int level){
 
 static void trimSpace(std::string &s){
     if(!s.empty()){
-        int pos1 = s.find_first_not_of(" ");
+        string::size_type pos1 = s.find_first_not_of(" ");
         if(pos1 != string::npos) s.erase(0,pos1);
-        int pos2 = s.find_last_not_of(" ");
+        string::size_type pos2 = s.find_last_not_of(" ");
         if(pos2 != string::npos) s.erase(pos2+1);
     }
 }
 
 static void trimComments(std::string &s){
     if(!s.empty()){
-        int pos = s.find_first_of("//");
+        string::size_type pos = s.find_first_of("//");
         if(pos != string::npos) s.erase(pos);
     }
 }
@@ -410,6 +423,7 @@ std::string parseCommandLabel(const std::string & command){
     std::string ans;
     vector<string> arr = split(command,' ');
     string label = arr[1];
+    while(label.back() == '\n'||label.back() == '\r') label.pop_back();
     ans += "(" + g_function_name + "$" + label +")\n";
 
     return ans;
@@ -419,6 +433,7 @@ std::string parseCommandGoto(const std::string & command){
     std::string ans;
     vector<string> arr = split(command,' ');
     string label = arr[1];
+    while(label.back() == '\n'||label.back() == '\r') label.pop_back();
     ans += "@" + g_function_name + "$" + label + "\n";
     ans += "0;JMP\n";
 
@@ -678,58 +693,149 @@ string parseCommand(string & command){
     return assembler;
 }
 
-int main(int argc, char * argv[]){
+string parseFile(string filename){
     ifstream fin;
-    ofstream fout;
 
-    /*check parameter*/
-    if(argc < 3) {
-        trace(LEVEL_DEGBUG,"Wrong File, Bad parameter.\n\r");
-        return -1;
-    }
-
-    /*initial out file*/
-    fout.open(argv[argc-1],std::ifstream::out);
-    if(!fout){
-        trace(LEVEL_DEGBUG,"Wrong File, Bad parameter.\n\r");
-        return -1;
-    }
-
-    /*init bootstrap code*/
+    /*parese file name*/
     string bootCommand = "// sys init \n" + parseCommandBootstrap();
+    vector<string> arr = split(string(filename),'.');
+    string command;
     string commandOut;
-    g_bootstrap_flag = false;
-    for(int i = 1; i < argc; i++){
-        /*parese file name*/
-        vector<string> arr = split(string(argv[i]),'.');
-        string command;
-        g_file_name = arr[0];
-
-        /*read vm program from file*/
-        fin.open(argv[i],std::ifstream::in);
-        if(!fin){
-            trace(LEVEL_DEGBUG,"Wrong File, can not read the input file.\n\r");
-            return -1;
+    g_file_name.clear();
+    for(int i = arr[0].size()-1; i >= 0; --i){
+        if(arr[0][i] == '/'){
+            break;
+        }else{
+            g_file_name = arr[0][i] + g_file_name;
         }
+    }
+    cout<<g_file_name<<endl;
+    //arr = split(g_file_name,'/');
+    //g_file_name = arr.back();
 
-        while(getline(fin,command)){
-            trimComments(command); // trim comments
-            trimSpace(command); //trim space
-            if(command.empty() || command.size() < 2) continue;
-
-            /*parse each line*/
-            commandOut.append("// " + command + "\n");
-            commandOut.append(parseCommand(command));
-            commandOut.append("\n");
-        }
-        fin.close();
+    /*read vm program from file*/
+    fin.open(filename,std::ifstream::in);
+    if(!fin){
+        trace(LEVEL_DEGBUG,"Wrong File, can not read the input file.\n\r");
+        return "";
     }
 
-    
+    while(getline(fin,command)){
+        trimComments(command); // trim comments
+        trimSpace(command); //trim space
+        if(command.empty() || command.size() < 2) continue;
+
+        /*parse each line*/
+        commandOut.append("// " + command + "\n");
+        commandOut.append(parseCommand(command));
+        commandOut.append("\n");
+    }
+
+    fin.close();
+    /*write file*/
     if(g_bootstrap_flag){
         commandOut =  bootCommand + commandOut;
+        g_bootstrap_flag = false;
     }
-    fout<<commandOut<<endl;
+
+    return commandOut;
+}
+
+int isDirectory(const char *path) {
+   struct stat statbuf;
+   if (stat(path, &statbuf) != 0)
+       return 0;
+   return S_ISDIR(statbuf.st_mode);
+}
+
+#ifdef _WIN32
+int main(int argc, char * argv[]){
+    ofstream fout;
+    struct _finddata_t fileinfo;
+    long hFile = 0;
+    
+    /*check parameter*/
+    if(argc < 2) {
+        trace(LEVEL_DEGBUG,"Wrong File, Bad parameter.\n\r");
+        return -1;
+    }
+
+    g_bootstrap_flag = false;
+    for(int i = 1; i < argc; i++){
+        /*check file or dir*/
+        struct stat s;
+        char filepath[512];
+        _fullpath(filepath,argv[i],512);
+        if(stat(filepath,&s) != -1 ) {
+            vector<string> arr = split(string(filepath),'.');
+            fout.open(arr[0] + ".asm",std::ifstream::out);
+            cout<<arr[0] + ".asm"<<endl;
+            fout<<parseFile(filepath)<<endl;
+        }else{
+            //single dir
+            string p;
+            string out;
+            g_bootstrap_flag = true;
+            vector<string> arr = split(string(filepath),'\\');
+            fout.open(string(argv[i]) + "\\" + arr.back() + ".asm",std::ifstream::out);
+            hFile =_findfirst(p.assign(argv[i]).append("\\*.vm").c_str(),&fileinfo);          
+            if(hFile != -1){
+                do{
+                    if((fileinfo.attrib &  _A_SUBDIR)){continue;}
+                    string filename = p.assign(argv[i]).append("\\").append(fileinfo.name);
+                    out.append(parseFile(filename));
+                    hFile = _findnext(hFile, &fileinfo);  
+                }while(hFile == 0);
+                fout<<out<<endl;
+            }
+        }
+    }    
+    return 0;
+}
+#else
+
+int main(int argc, char * argv[]){
+    ofstream fout;
+    string input;
+    string out;
+    
+    /*check parameter*/
+    if(argc < 2) {
+        trace(LEVEL_DEGBUG,"Wrong File, Bad parameter.\n\r");
+        return -1;
+    }
+
+    g_bootstrap_flag = false;
+    /*check file or dir*/
+    if(isDirectory(argv[1])){
+        DIR *dir;
+        struct dirent *ptr;
+        string infile;
+        dir = opendir(argv[1]);
+        g_bootstrap_flag = true;
+        
+        while((ptr=readdir(dir))!=NULL)
+        {
+            //skip'.' and '..'
+            if(ptr->d_name[0] == '.') continue;
+            vector<string> arr = split(string(ptr->d_name),'.');
+            if(arr.back() == "vm"){
+                input = string(argv[1]) + "/" + string(ptr->d_name);
+                out.append(parseFile(input));
+            }
+        }
+        
+        vector<string> arr = split(string(argv[1]),'/');
+        fout.open(string(argv[1]) + "/" + arr.back() + ".asm",std::ifstream::out);
+        fout<<out<<endl;
+        closedir(dir);
+    }else{
+        out.append(parseFile(argv[1]));
+        vector<string> arr = split(string(argv[1]),'.');
+        fout.open(arr[0] + ".asm",std::ifstream::out);
+        fout<<out<<endl;
+    }
     fout.close();
     return 0;
 }
+#endif

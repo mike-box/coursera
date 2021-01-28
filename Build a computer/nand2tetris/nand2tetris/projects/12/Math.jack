@@ -8,14 +8,42 @@
  * Note: Jack compilers implement multiplication and division using OS method calls.
  */
 class Math {
-
+    static Array two;
     /** Initializes the library. */
     function void init() {
+        var int i;
+        let two = Array.new(16);
+        let two[0] = 1;
+        let i = 1;
+
+        while(i < 16){
+            let two[i] = two[i-1] + two[i-1];
+            let i = i + 1;
+        }
+        return;
     }
 
     /** Returns the absolute value of x. */
     function int abs(int x) {
+        if(x < 0){ return -x;}
+        return x;
     }
+
+    /**return the ith bit of x **/
+    function boolean bit(int x,int i){
+        return (~((x&two[i]) = 0));
+    }
+
+    /*clear the one bit of number*/
+    function int bitClr(int x,int i){
+        return (x&(~two[i]));
+    }
+
+    /*set the one bit of number*/
+    function int bitSet(int x,int i){
+        return (x|two[i]);
+    }
+
 
     /** Returns the product of x and y. 
      *  When a Jack compiler detects the multiplication operator '*' in the 
@@ -23,6 +51,22 @@ class Math {
      *  the Jack expressions x*y and multiply(x,y) return the same value.
      */
     function int multiply(int x, int y) {
+        var int sum;
+        var int shiftX;
+        var int i;
+        
+        let sum = 0;
+        let shiftX = x;
+        let i = 0;
+        while((i < 16)&(~(y = 0))){
+            if(~((y&two[i]) = 0)){
+                let sum = sum + shiftX;
+                let y = y - two[i];
+            }
+            let shiftX = shiftX + shiftX;
+            let i = i + 1;
+        }
+        return sum;
     }
 
     /** Returns the integer part of x/y.
@@ -31,17 +75,109 @@ class Math {
      *  the Jack expressions x/y and divide(x,y) return the same value.
      */
     function int divide(int x, int y) {
+        var int q;
+        if(y = 0){
+            do Sys.error(0);
+            return 0;
+        }
+        let q = Math._divide(Math.abs(x),Math.abs(y));
+        if((x < 0) = (y < 0)){
+            return q;
+        }else{
+            return -q;
+        }
+    }
+
+    function int _divide(int x,int y){
+        var int q;
+        var int sum;
+
+        if(x < y){return 0;}
+        if(y < 16384){
+            let q = Math._divide(x,y+y);
+        }else{
+            let q = 0;
+        }
+
+        let q = q + q;
+        if((x - (q*y)) < y){
+            return q;
+        }else{
+            return q + 1;
+        }        
     }
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
+        var int l;
+        var int r;
+        var int ret;
+        var int mid;
+
+        let l = 1;
+        let r = 181;
+        if(~(x > 0)){return 0;}
+        while(~(l > r)){
+            let mid = (l+r)/2;
+            if((mid*mid) > x){
+                let r = mid - 1;
+            }else{
+                let ret = l;
+                let l = mid + 1;
+            }
+        }
+
+        return ret;
+    }
+
+    /** Returns x pow y*/
+    function int pow(int x,int y) {
+        var int p;
+
+        if(~(y > 0)){return 1;}
+        if(y = 1){return x;}
+        let p = Math.pow(x,y/2);
+        if(Math.bit(y,0)){
+            return x*p*p;
+        }else{
+            return p*p;
+        }
     }
 
     /** Returns the greater number. */
     function int max(int a, int b) {
+        if(a > b){
+            return a;
+        }else{ 
+            return b;
+        }
     }
 
     /** Returns the smaller number. */
     function int min(int a, int b) {
+        if(a < b){
+            return a;
+        }else{ 
+            return b;
+        }
     }
+
+    /** Returns the left shift (x<<1) number. */
+    function int leftshift(int x) {
+        return Math.multiply(x,2);
+    }
+
+    /** Returns the right shift (x>>1) number. */
+    function int rightshift(int x) {
+        return Math.divide(x,2);
+    }
+
+    /*Returns a mod b. b must be positive.*/
+	function int mod(int a, int b) {
+        var int q;
+		if(a < 0){ let a = -a;}
+        if(b < 0){ let b = -b;}
+        let q = Math.divide(a,b);
+		return a - q*b;
+	}
 }

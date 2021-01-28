@@ -9,26 +9,80 @@
  * consists of 32,768 words, each holding a 16-bit binary number.
  */ 
 class Memory {
+    static Array ram;
+    static Array heap;
+    static int heapBase;
+    static int heapTail;
+    
+    static int free;
+    static int used;
 
     /** Initializes the class. */
     function void init() {
+        let ram = 0;
+        let heapBase = 2048;
+        let heapTail = 16383;
+        let heap = 2048;
+        let heap[0] = 0;
+        let heap[1] = 14334;
+        let used = 0;
+        let free = 14300;
+        return;
     }
 
     /** Returns the RAM value at the given address. */
     function int peek(int address) {
+        if((address < 0) | (address > 32767)) { return -1; }
+        return ram[address];
     }
 
     /** Sets the RAM value at the given address to the given value. */
     function void poke(int address, int value) {
+        if(address < 0 | address > 32767) { return;}
+        let ram[address] = value;
+        return;
     }
 
     /** Finds an available RAM block of the given size and returns
      *  a reference to its base address. */
     function int alloc(int size) {
+        var int address;
+        var int curr;
+        var Array freeList;
+        
+        /* first fit*/
+        let freeList = heap;
+        while((freeList[0] > 0) & (freeList[1] < (size + 2))){
+            let freeList = freeList[0];
+        }
+        /*first fit*/
+        if(freeList[1] < (size+2)){return 0;}
+        let address = freeList + freeList[1] - size;
+        let freeList[1] = freeList[1] - size - 2;
+        let address[0] = 0;
+        let address[1] = size;
+        let used = used + size + 2;
+        let free = free - size - 2;
+        return address+2;
+    }
+
+    /* print all free heap block*/
+    function void debug(int size){
+        do Output.printString("used memory:");
+        do Output.printInt(used);
+        do Output.printString("free memory:");
+        do Output.printInt(free);
+        return;
     }
 
     /** De-allocates the given object (cast as an array) by making
      *  it available for future allocations. */
     function void deAlloc(Array o) {
+        /*link the current block to the freeList*/
+        let ram[o-2] = heap;
+        let heap = ram[o-2];
+        let used = used - heap[1] - 2;
+        let free = free + heap[1] + 2;
+        return;
     }    
 }

@@ -7,9 +7,12 @@
  * A library for handling user input from the keyboard.
  */
 class Keyboard {
+    static int baseaddr;
 
     /** Initializes the keyboard. */
     function void init() {
+        let baseaddr = 24576;
+        return;
     } 
 
     /**
@@ -33,6 +36,7 @@ class Keyboard {
      * F1 - F12 = 141 - 152
      */
     function char keyPressed() {
+        return Memory.peek(baseaddr);
     }
 
     /**								
@@ -41,6 +45,14 @@ class Keyboard {
      * of the pressed key.
      */
     function char readChar() {
+        var char c;
+
+        do Output.printChar(0);
+        while(Keyboard.keyPressed() = 0){}
+        let c = Keyboard.keyPressed();
+        while(~(Keyboard.keyPressed() = 0)){}
+        do Output.printChar(c);
+        return c;
     }
 
     /**								
@@ -49,7 +61,28 @@ class Keyboard {
      * and returns its value. Also handles user backspaces.
      */
     function String readLine(String message) {
-    }   
+        var String str;
+        var char c;
+
+        do Output.printString(message);
+        let str = String.new(80);
+        while(true){
+            let c = Keyboard.readChar();
+            if(c = String.newLine()){
+                do Output.println();
+                return str;
+            }
+            if(c = String.backSpace()){
+                do str.eraseLastChar();
+                do Output.backSpace();
+            }else{
+                do str.appendChar(c);
+            }
+        }
+
+        return str;
+    }
+    
 
     /**								
      * Displays the message on the screen, reads from the keyboard the entered
@@ -58,5 +91,38 @@ class Keyboard {
      * entered text is detected). Also handles user backspaces. 
      */
     function int readInt(String message) {
+        var String str;
+        var int c;
+        var int val;
+        var int i;
+        var boolean sig;
+
+        let val = 0;
+        let i = 0;
+        let sig = true;
+        do Output.printString(message);
+        while(true){
+            let c = Keyboard.readChar();
+            if(c = String.backSpace()){
+                let val = val/10;
+            }else{
+                if((i = 0)&(c = 45)){
+                    let sig = false;
+                }else{
+                    if((c < 48)|(c > 57)){
+                        if(~sig){
+                            return -val;
+                        }else{
+                            return val;
+                        }
+                    }
+                    let val = val*10 + c - 48;
+                }
+                
+            }
+            let i = i + 1;
+        }
+
+        return val;
     }
 }

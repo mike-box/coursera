@@ -1,0 +1,315 @@
+// Jack Be NIMble was programmed by Wayne Heller
+// All Rights Reserved. January 2021
+// Source: https://github.com/wayneheller/nand2tetris
+
+/**
+ * Implements the Jack Be NIMble game.
+ * This game consists of removing items from heaps
+ * The person who removes the last item from the last heap either wins or loses
+ * depending on the game type
+ * The user defines the number of heaps and the size of each heap
+ * The user also defines whether picking the last item wins or loses the game
+ */
+
+class NIMGame {
+   field Array heaps;         // the collection of heap objects in the game
+   field int numHeaps;        // the number of heaps in the game
+   field int NimSum;          // the NimSum of all the heaps in the game
+   field int gameType;        // 0 = taking last item wins; 1 = taking last item loses
+   field boolean isNearEnd;   // Near end of the game means there is only 1 heap with an item count greater than 1
+   field boolean gameOver;    // All items on all heaps have been removed.
+   field int nonZeroHeaps;    // the count of heaps with at least 1 item in them
+   field int idxLrgHeap;      // the index of the heap with the most items.  Ties go to the lowest index number.
+                        
+
+   /** Constructs a new NIM Game. */
+   constructor NIMGame new(int Aheaps, Array AheapSizes, int AgameType) {
+      var int i;
+      let i = 0;
+
+      let gameType = AgameType;
+      let numHeaps = Aheaps;
+      let heaps = Array.new(numHeaps);
+
+      while (i < numHeaps) {
+         let heaps[i] = Heap.new(AheapSizes[i]);
+         let i = i + 1;
+      }
+      return this;
+   }
+
+   /** Disposes this game. */
+   method void dispose() {
+      var Heap heap;
+      var int i;
+      let i = 0;
+      while (i < numHeaps) {
+         let heap = heaps[i];
+         //do heaps[i].dispose();
+         do heap.dispose();
+         let i = i + 1;
+      }
+      do heaps.dispose();
+      do Memory.deAlloc(this);
+      return;
+   }
+
+   /** Runs the game: handles the user's inputs  */
+   method void play() {
+      var int idxHeap;         // the index of the heap the user has selected for reduction
+      var boolean isValidHeap; // true if the heap is a valid selection, i.e. not an empty heap
+      var Heap heap;
+      var boolean isError;
+      var int heapSize;
+      var int itemsToRemove;   // the number of items the user wants to remove from the heap
+
+      let gameOver = false;
+
+      while (~gameOver) {
+
+         // Display Game Board
+         do displayGameBoard();
+         
+         // Request User Input
+         // Which heap to reduce
+         let isValidHeap = false;
+         while (~isValidHeap) {
+            let idxHeap = UX.getHeap(numHeaps);
+            let heap = heaps[idxHeap];
+            let isValidHeap = ~heap.isEmpty();
+            if (~isValidHeap) {
+               do UX.displayErrHeapEmpty(idxHeap);
+            }
+         }
+
+         // clear any error messages
+         do UX.clearErrHeapEmpty();
+
+         // how many items to remove
+         let heapSize = heap.getSize();
+         let itemsToRemove = UX.getNumToRemove(heapSize, idxHeap);
+
+         // Decrement Heap
+         do heap.reduce(itemsToRemove);
+
+         // Update Board
+         do displayGameBoard();
+
+         // Analyze Game Board
+         do analyzeGame();
+
+         // Did User Win or Lose on this turn?
+         if (gameOver) {
+            if (gameType = 0) {
+               do UX.displayWin();
+            }
+            else {
+               do UX.displayLoss();
+            }
+            return;
+         } 
+
+         // Calc Nim Sum
+         do calcNimSum();
+
+         // Computer Moves
+         let idxHeap = findHeapToReduce();
+         let itemsToRemove = calcHeapReduction(idxHeap);
+         let heap = heaps[idxHeap];
+         do heap.reduce(itemsToRemove);
+
+         // Update Board
+         do displayGameBoard();
+
+         // display computer move
+         do UX.displayMove(itemsToRemove, idxHeap);
+
+         // Analyze Board
+         do analyzeGame();
+
+         // Did Computer Win or Lose on this turn?
+         if (gameOver) {
+
+            if (gameType = 0) {
+               do UX.displayLoss();
+            }
+            else {
+               do UX.displayWin();
+            }
+            return;
+         }
+      }
+      return;
+   }
+
+   /** analyze the heaps and set field variables with current state */
+   method void analyzeGame() {
+      var int i, s;              
+      var Heap heap;
+      var int cntLrgHeaps;        // count of heaps with more than 1 item
+      var int cntHeaps;           // count of heaps with at least 1 item
+      var int maxIdx, maxSize;    // the index and size of the heap with the largest size
+
+      let cntHeaps = 0;
+      let cntLrgHeaps = 0;
+      let maxIdx = 0;            // The index of the heap with the maximum size
+      let maxSize = 0;           // The size of the largest heap
+
+      while (i < numHeaps) {
+         let heap = heaps[i];
+         let s = heap.getSize();
+         if (s > 1) {
+            let cntLrgHeaps = cntLrgHeaps + 1;
+         }
+         if (s > 0) {
+            let cntHeaps = cntHeaps + 1;
+         }
+         if (s > maxSize) {
+            let maxIdx = i;
+            let maxSize = s;
+         }
+         let i = i + 1;
+      }
+
+      let isNearEnd = (cntLrgHeaps < 2);  // Set field values
+      let nonZeroHeaps = cntHeaps;
+      let gameOver = (cntHeaps = 0);
+      let idxLrgHeap = maxIdx;
+   
+      return;
+   }
+
+   method void calcNimSum() {
+      var int i, a, b;
+      var Heap heap;
+
+      let i = 1;
+      let heap = heaps[0];
+      let a = heap.getSize();
+      while (i < numHeaps) { 
+         let heap = heaps[i];
+         let b = heap.getSize();
+         let a = Utils.Xor(a, b);
+         let i = i + 1;
+      }
+      let NimSum = a;
+      return;
+   }
+
+   method int findHeapToReduce() {
+      var int i, s;
+      var int maxIdx, maxSize;
+      var Heap heap;
+      var int heapNimSum;
+
+      let i = 0;
+      if ((NimSum = 0) | ((gameType = 1) & isNearEnd))  {   // The human player has the advantage and there is no clear best next move at this time
+                                                            // Strategy: Find the heap with the greatest number of items and decrement by 1
+                                                            // OR
+                                                            // For gameType = 1, the strategy changes slightly near the end of the game
+                                                            // where end of the game means there is only 1 heap with an item count greater than 1
+         return(idxLrgHeap);
+      }
+
+      while (i < numHeaps) {        // The computer player has the advantage and the following code will determine which heap to reduce
+         let heap = heaps[i];
+         let s = heap.getSize();
+         let heapNimSum = Utils.Xor(s, NimSum);
+         if (heapNimSum < s) {
+            return(i);
+            }
+         else {
+            let i=i+1;
+            }
+      }
+
+      return(numHeaps + 1);  // returns a value to indicate that no preferred move is found, this condition should never be met
+   }
+
+   method int calcHeapReduction(int idxHeap) {
+      var int s;
+      var Heap heap;
+      var int heapsRemaining;             // The number of heaps with at least 1 item
+      var boolean oddNumHeapsRemaining;   // True if there are an odd number of heaps remaining
+
+      if (NimSum = 0) {                   // The human player has the advantage and there is no clear best next move at this time
+          return(1);                      // Strategy: Find the heap with the greatest number of items and decrement by 1
+      }
+
+      if ((gameType = 1) & isNearEnd) {   // if there is an odd number of heaps remaining, leave one item in the heap
+                                          // if even, remove the entire heap
+
+         let oddNumHeapsRemaining = Utils.isOdd(nonZeroHeaps);
+         let heap = heaps[idxHeap];
+         let s = heap.getSize();
+         if (oddNumHeapsRemaining) {
+            if (s = 1) {
+               return(s);
+            }
+            else {
+               return(s-1);
+            }
+            
+         }
+         else {
+            return(s);
+         }
+      }
+
+      else {                              // Calculate is the next best reduction to retain a winning position
+         let heap = heaps[idxHeap];
+         let s = heap.getSize();
+         return(s - Utils.Xor(s, NimSum));  // return the different between the heap size and the heap Nim sum
+      }
+   }
+
+   /** Simple textual display of heap sizes */
+   method void displayGameBoard() {
+      var int i, s, t;
+      var int row;            // row to display heap size and tally marks
+      var Heap heap;
+      var String msg;
+
+      do Screen.clearScreen();
+      do Output.moveCursor(0,25);
+      do Output.printString("Jack Be NIMble");
+      do Output.println();
+      do Output.println();
+      if (gameType = 0) {
+         let msg = "Taking the last item off the last heap WINS the game.";
+         do Output.printString(msg);
+      }
+      else {
+         let msg = "Taking the last item off the last heap LOSES the game.";
+         do Output.printString(msg);
+      }
+      do Output.println();
+      do Output.println();
+      let msg = "  Heap     Size        Tally Marks";
+      do Output.printString(msg);
+      do Output.println();
+      let msg = " ______   ______   ___________________";
+      do Output.printString(msg);
+      do Output.println();
+      while (i < numHeaps) {
+         do Output.println();
+         let heap = heaps[i];
+         let s = heap.getSize();
+         let row = (2 * i) + 7;
+         do Output.moveCursor(row, 4); do Output.printInt(i+1); do Output.moveCursor(row, 13);do Output.printInt(s);
+         let t = 0;
+         while (t < s) {
+            do UX.drawTallyMark(row, 20 + (2 * t));
+            let t = t + 1;
+         }
+         
+         let i = i + 1;
+      }
+      do Output.println(); do Output.println();
+      do msg.dispose();
+
+      return;
+   }
+
+   
+}

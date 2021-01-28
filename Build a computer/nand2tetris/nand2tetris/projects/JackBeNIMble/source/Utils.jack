@@ -1,0 +1,15 @@
+// Jack Be NIMble was programmed by Wayne Heller
+// All Rights Reserved. January 2021
+// Source: https://github.com/wayneheller/nand2tetris
+
+/** Utility functions used by Jack Be NIMble Game */
+
+class Utils {
+    function int Xor(int a, int b) { 	// Xor = (a & ~b) | (b & ~a)
+    	return((a & ~b)|(b & ~a));
+    }
+
+    function boolean isOdd(int a) {
+    	return((a & 1) = 1); 			// will return true if the least significant bit is 1.
+    }
+}   

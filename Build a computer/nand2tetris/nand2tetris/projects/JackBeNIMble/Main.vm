@@ -1,0 +1,146 @@
+function Main.main 9
+push constant 0
+not
+pop local 5
+push constant 0
+pop local 7
+push constant 0
+pop local 8
+push constant 0
+pop local 7
+push constant 0
+pop local 6
+label WHILE_EXP0
+push local 5
+not
+if-goto WHILE_END0
+call Screen.clearScreen 0
+pop temp 0
+push local 8
+not
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+call UX.displayInstructions 0
+pop temp 0
+label IF_FALSE0
+call Screen.clearScreen 0
+pop temp 0
+push local 8
+not
+if-goto IF_TRUE1
+goto IF_FALSE1
+label IF_TRUE1
+call UX.getUsePredefined 0
+pop local 6
+label IF_FALSE1
+push local 6
+if-goto IF_TRUE2
+goto IF_FALSE2
+label IF_TRUE2
+push constant 3
+pop local 2
+push local 2
+call Array.new 1
+pop local 1
+push constant 0
+push local 1
+add
+push constant 3
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 1
+push local 1
+add
+push constant 4
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 2
+push local 1
+add
+push constant 5
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push constant 0
+pop local 3
+label IF_FALSE2
+push local 8
+if-goto IF_TRUE3
+goto IF_FALSE3
+label IF_TRUE3
+call UX.getUseLastConfig 0
+pop local 7
+label IF_FALSE3
+push local 7
+not
+push local 6
+not
+and
+if-goto IF_TRUE4
+goto IF_FALSE4
+label IF_TRUE4
+call Screen.clearScreen 0
+pop temp 0
+call UX.getNumHeaps 0
+pop local 2
+push local 2
+call Array.new 1
+pop local 1
+push constant 0
+pop local 4
+label WHILE_EXP1
+push local 4
+push local 2
+lt
+not
+if-goto WHILE_END1
+push local 4
+push local 1
+add
+push local 4
+call UX.getHeapSize 1
+pop temp 0
+pop pointer 1
+push temp 0
+pop that 0
+push local 4
+push constant 1
+add
+pop local 4
+goto WHILE_EXP1
+label WHILE_END1
+call UX.getGameType 0
+pop local 3
+label IF_FALSE4
+push constant 0
+not
+pop local 8
+push constant 0
+pop local 6
+push local 2
+push local 1
+push local 3
+call NIMGame.new 3
+pop local 0
+call Screen.clearScreen 0
+pop temp 0
+push local 0
+call NIMGame.play 1
+pop temp 0
+push local 0
+call NIMGame.dispose 1
+pop temp 0
+call UX.getPlayAgain 0
+pop local 5
+goto WHILE_EXP0
+label WHILE_END0
+call UX.displayCredits 0
+pop temp 0
+push constant 0
+return

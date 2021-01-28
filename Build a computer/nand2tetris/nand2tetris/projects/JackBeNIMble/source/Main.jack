@@ -1,0 +1,109 @@
+// Jack Be NIMble was programmed by Wayne Heller
+// All Rights Reserved. January 2021
+// Source: https://github.com/wayneheller/nand2tetris
+
+/** Initializes a new Jack Be NIMble game and starts running it. 
+    Main.jack is responsible for establishing the game configuration settings
+    either from user input or from preset parameters
+    Once game parameters are established contol of a single game flow is
+    managed by NIMGame.jack.
+    Control is returned here at the completion of a game and the user is asked
+    whether they want to start a new game using the same or different configuration parameters
+*/
+class Main {
+    function void main() {
+        var NIMGame game;			// instance of the NIMGame class - is the game controller
+        var Array heapSizes;		// array of the sizes of the heaps in the game, used to construct NIMGame
+        var int numHeaps;			// number of heaps in the game
+        var int gameType;			// 0 is taking last item WINS; 1 if taking last item LOSES
+        var int i;
+        var boolean continuePlay;			// false when the user wishes to quit the game
+        var boolean usePredefinedConfig;	// when true the game will be started with predefined parameters
+        var boolean useLastConfig;			// when true, the next game will use the same parameters as the last game
+        var boolean isConfigured;			// when true, all game configurations have been set
+
+
+        let continuePlay = true;
+        let useLastConfig = false;
+        let isConfigured = false;
+        let useLastConfig = false;
+        let usePredefinedConfig = false;
+
+        while (continuePlay) {
+
+	        // Clear the screen
+	        do Screen.clearScreen();
+
+	        // Display Game Instructions the first time through
+	        if (~isConfigured) {
+	        	do UX.displayInstructions();
+	        }
+
+	        // Clear the screen
+	        do Screen.clearScreen();
+
+	        // Ask whether to use a predefined configuration if the first time through
+	        if (~isConfigured) {
+	        	let usePredefinedConfig = UX.getUsePredefined();
+	        }
+
+	        if (usePredefinedConfig) {
+	        	let numHeaps = 3;
+	        	let heapSizes = Array.new(numHeaps);
+	        	let heapSizes[0] = 3;
+	        	let heapSizes[1] = 4;
+	        	let heapSizes[2] = 5;
+	        	let gameType = 0;
+	        }
+
+	        // If this is not the first time through, ask user whether to use the config from the last game.
+	       	if (isConfigured) {
+	        	let useLastConfig = UX.getUseLastConfig();
+	        }
+
+	        if (~useLastConfig & ~usePredefinedConfig) {
+
+		        // Get game setup parameters from the user
+		        do Screen.clearScreen();
+
+		        let numHeaps = UX.getNumHeaps();		// Number of Heaps
+		        let heapSizes = Array.new(numHeaps);  	// Size of each Heap
+	        	
+	        	let i = 0;
+	        	while (i < numHeaps) {					// Heap sizes
+	        		let heapSizes[i] = UX.getHeapSize(i);
+	        		let i = i + 1;
+	        	}
+
+	        	let gameType = UX.getGameType();		// Game Type
+
+		    }    
+
+		    let isConfigured = true;
+		    let usePredefinedConfig = false; 
+
+	        // initialize the game with user set parameters
+	        /*do Output.moveCursor(0,0);
+	        do Output.printInt(numHeaps); do Output.println();
+	        do Output.printInt(heapSizes[0]); do Output.println();
+	        do Output.printInt(heapSizes[1]); do Output.println();
+	        do Output.printInt(heapSizes[2]); do Output.println();
+	        do Output.printInt(gameType); do Output.println();
+	        do Sys.wait(8000); */
+	        let game = NIMGame.new(numHeaps, heapSizes, gameType);
+
+	        // Clear the screen
+	        do Screen.clearScreen();
+
+	        do game.play();
+	        
+	        do game.dispose();
+
+	        // prompt for another game
+	        let continuePlay = UX.getPlayAgain();
+	    }
+	    do UX.displayCredits();
+
+        return;
+    }
+}

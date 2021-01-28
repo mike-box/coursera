@@ -4,7 +4,7 @@
 #include <unordered_map>
 #include <map>
 #include <fstream>
-#include "vmTranslator.hpp"
+#include "VMTranslator.hpp"
 
 using namespace std;
 

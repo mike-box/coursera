@@ -1,0 +1,47 @@
+function Heap.new 0
+push constant 2
+call Memory.alloc 1
+pop pointer 0
+push argument 0
+pop this 0
+push constant 0
+pop this 1
+push pointer 0
+return
+function Heap.dispose 0
+push argument 0
+pop pointer 0
+push pointer 0
+call Memory.deAlloc 1
+pop temp 0
+push constant 0
+return
+function Heap.reduce 0
+push argument 0
+pop pointer 0
+push this 0
+push argument 1
+sub
+pop this 0
+push this 0
+push constant 0
+eq
+if-goto IF_TRUE0
+goto IF_FALSE0
+label IF_TRUE0
+push constant 0
+not
+pop this 1
+label IF_FALSE0
+push constant 0
+return
+function Heap.getSize 0
+push argument 0
+pop pointer 0
+push this 0
+return
+function Heap.isEmpty 0
+push argument 0
+pop pointer 0
+push this 1
+return

@@ -1,0 +1,18 @@
+function Utils.Xor 0
+push argument 0
+push argument 1
+not
+and
+push argument 1
+push argument 0
+not
+and
+or
+return
+function Utils.isOdd 0
+push argument 0
+push constant 1
+and
+push constant 1
+eq
+return
